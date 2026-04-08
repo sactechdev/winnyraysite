@@ -1,0 +1,7 @@
+{
+  "name": "WinnyRay Nigeria Limited",
+  "description": "Premium Professional Cleaning and Real Estate Services in Nigeria. Luxury design, seamless bookings, and high-end property listings.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

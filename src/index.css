@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
+  
+  --color-primary: #C9A646;
+  --color-primary-dark: #A6852F;
+  --color-secondary: #0B0B0B;
+  --color-accent: #D4AF37;
+  
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-secondary font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@utility glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
+}
+
+@utility gold-gradient {
+  @apply bg-gradient-to-br from-[#C9A646] via-[#D4AF37] to-[#A6852F];
+}
+
+@utility btn-primary {
+  @apply gold-gradient text-white px-6 py-3 rounded-md font-semibold transition-all hover:opacity-90 active:scale-95 shadow-md;
+}
+
+@utility btn-outline {
+  @apply border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold transition-all hover:bg-primary hover:text-white active:scale-95;
+}
+
+
