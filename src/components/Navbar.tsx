@@ -9,6 +9,7 @@ const navItems = [
   { name: 'Cleaning', path: '/cleaning', icon: Sparkles },
   { name: 'Real Estate', path: '/real-estate', icon: Home },
   { name: 'Contact', path: '/contact', icon: User },
+  { name: 'CMS', path: '/admin/cms', icon: User },
 ];
 
 export default function Navbar() {
@@ -20,13 +21,31 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-display font-bold gold-gradient bg-clip-text text-transparent">
-                WINNYRAY
-              </span>
-              <span className="hidden sm:block text-xs font-medium tracking-widest text-secondary/60 uppercase">
-                Nigeria Limited
-              </span>
+            <Link to="/" className="flex items-center space-x-3">
+              <img 
+                src="https://ais-dev-4f5wuijwhxhi2tuo2bq2cn-41192636823.europe-west3.run.app/logo.png" 
+                alt="WinnyRay Logo" 
+                className="h-12 w-auto"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  // Fallback if image fails
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <div className="hidden">
+                <span className="text-2xl font-display font-bold gold-gradient bg-clip-text text-transparent">
+                  WINNYRAY
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-display font-bold gold-gradient bg-clip-text text-transparent leading-none">
+                  WINNYRAY
+                </span>
+                <span className="hidden sm:block text-[10px] font-medium tracking-[0.2em] text-secondary/60 uppercase">
+                  Nigeria Limited
+                </span>
+              </div>
             </Link>
           </div>
 

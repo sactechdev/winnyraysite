@@ -13,26 +13,33 @@ import BookingPage from './pages/BookingPage';
 import PropertyDetailPage from './pages/PropertyDetailPage';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
+import ContactPage from './pages/ContactPage';
+import AdminCMS from './pages/AdminCMS';
+import { ContentProvider } from './lib/ContentContext';
 
 export default function App() {
   return (
-    <Router>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/cleaning" element={<CleaningPage />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="/real-estate" element={<RealEstatePage />} />
-            <Route path="/property/:id" element={<PropertyDetailPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard/*" element={<Dashboard />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <ContentProvider>
+      <Router>
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/cleaning" element={<CleaningPage />} />
+              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/real-estate" element={<RealEstatePage />} />
+              <Route path="/property/:id" element={<PropertyDetailPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/dashboard/*" element={<Dashboard />} />
+              <Route path="/admin/cms" element={<AdminCMS />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </ContentProvider>
   );
 }
 
