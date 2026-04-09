@@ -47,7 +47,7 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-white/60">
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary shrink-0" />
-                <span>No. 45 Zoo Road, Kano State, Nigeria</span>
+                <span>15 Bravo Close Zungeru by kwakwachi, Kano</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={18} className="text-primary shrink-0" />

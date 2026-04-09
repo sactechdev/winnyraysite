@@ -2,55 +2,31 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Sparkles, Home, Shield, Star, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const slides = [
-  {
-    title: "Pristine Spaces, Professional Care",
-    subtitle: "Premium Cleaning Services in Kano",
-    desc: "Experience the gold standard of cleanliness for your home and office.",
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6958?auto=format&fit=crop&q=80&w=1920",
-    link: "/cleaning",
-    btnText: "Cleaning Services",
-    type: "cleaning"
-  },
-  {
-    title: "Exclusive Real Estate Listings",
-    subtitle: "Find Your Dream Home in Kano",
-    desc: "Discover premium properties in Nigeria's most prestigious neighborhoods.",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1920",
-    link: "/real-estate",
-    btnText: "Real Estate",
-    type: "real-estate"
-  },
-  {
-    title: "Meticulous Office Maintenance",
-    subtitle: "Corporate Cleaning Excellence",
-    desc: "Boost productivity with a clean, healthy, and professional workspace.",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1920",
-    link: "/cleaning",
-    btnText: "Commercial Cleaning",
-    type: "cleaning"
-  },
-  {
-    title: "Luxury Living Redefined",
-    subtitle: "Modern Architecture & Design",
-    desc: "Bespoke real estate solutions for the discerning client in Kano.",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1920",
-    link: "/real-estate",
-    btnText: "Browse Properties",
-    type: "real-estate"
-  }
-];
+import { useContent } from '@/src/lib/ContentContext';
 
 export default function HomePage() {
+  const { content, loading } = useContent();
   const [currentSlide, setCurrentSlide] = React.useState(0);
+  const slides = content.hero_slides.length > 0 ? content.hero_slides : [
+    {
+      title: "Pristine Spaces, Professional Care",
+      subtitle: "Premium Cleaning Services in Kano",
+      desc: "Experience the gold standard of cleanliness for your home and office.",
+      image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1920",
+      link: "/cleaning",
+      btnText: "Cleaning Services"
+    }
+  ];
 
   React.useEffect(() => {
+    if (slides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
+
+  if (loading) return <div className="pt-40 text-center">Loading...</div>;
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
@@ -112,25 +88,29 @@ export default function HomePage() {
         </div>
 
         {/* Slider Controls */}
-        <div className="absolute bottom-10 right-10 z-20 flex space-x-4">
-          <button onClick={prevSlide} className="p-3 rounded-full border border-white/20 text-white hover:bg-primary hover:border-primary transition-all">
-            <ChevronLeft size={24} />
-          </button>
-          <button onClick={nextSlide} className="p-3 rounded-full border border-white/20 text-white hover:bg-primary hover:border-primary transition-all">
-            <ChevronRight size={24} />
-          </button>
-        </div>
+        {slides.length > 1 && (
+          <>
+            <div className="absolute bottom-10 right-10 z-20 flex space-x-4">
+              <button onClick={prevSlide} className="p-3 rounded-full border border-white/20 text-white hover:bg-primary hover:border-primary transition-all">
+                <ChevronLeft size={24} />
+              </button>
+              <button onClick={nextSlide} className="p-3 rounded-full border border-white/20 text-white hover:bg-primary hover:border-primary transition-all">
+                <ChevronRight size={24} />
+              </button>
+            </div>
 
-        {/* Slide Indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
-          {slides.map((_, i) => (
-            <button 
-              key={i} 
-              onClick={() => setCurrentSlide(i)}
-              className={`w-12 h-1 rounded-full transition-all ${currentSlide === i ? 'bg-primary' : 'bg-white/20'}`}
-            />
-          ))}
-        </div>
+            {/* Slide Indicators */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+              {slides.map((_, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => setCurrentSlide(i)}
+                  className={`w-12 h-1 rounded-full transition-all ${currentSlide === i ? 'bg-primary' : 'bg-white/20'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {/* Dual Service Showcase */}
@@ -143,7 +123,7 @@ export default function HomePage() {
               className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-2xl"
             >
               <img 
-                src="https://images.unsplash.com/photo-1581578731548-c64695cc6958?auto=format&fit=crop&q=80&w=1000" 
+                src={content.services.cleaning[0]?.image || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1000"} 
                 alt="Professional Cleaning" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -165,7 +145,7 @@ export default function HomePage() {
               className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-2xl"
             >
               <img 
-                src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000" 
+                src={content.services.real_estate[0]?.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000"} 
                 alt="Luxury Real Estate" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"

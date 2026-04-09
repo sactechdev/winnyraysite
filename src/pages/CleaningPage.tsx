@@ -118,7 +118,7 @@ export default function CleaningPage() {
             </div>
             <div className="flex-1 relative">
               <img 
-                src="https://images.unsplash.com/photo-1581578731548-c64695cc6958?auto=format&fit=crop&q=80&w=800" 
+                src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800" 
                 alt="Cleaning Process" 
                 className="rounded-2xl shadow-2xl relative z-10"
                 referrerPolicy="no-referrer"

@@ -35,7 +35,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Our Office</h4>
-                      <p className="text-secondary/60">No. 45 Zoo Road, Kano State, Nigeria</p>
+                      <p className="text-secondary/60">15 Bravo Close Zungeru by kwakwachi, Kano</p>
                     </div>
                   </div>
 
