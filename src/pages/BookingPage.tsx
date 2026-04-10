@@ -3,15 +3,17 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'motion/react';
-import { Calendar, Clock, MapPin, User, Mail, Phone, FileText, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Mail, Phone, FileText, CheckCircle2, ArrowRight, Sparkles, Home } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { supabase } from '@/src/lib/supabase';
+import { useSearchParams } from 'react-router-dom';
 
 const bookingSchema = z.object({
   clientName: z.string().min(2, "Please enter your full name"),
   clientEmail: z.string().email("Please enter a valid email"),
   clientPhone: z.string().min(10, "Please enter a valid phone number"),
-  serviceType: z.string().min(1, "Please select a service"),
+  category: z.enum(['cleaning', 'real-estate']),
+  serviceType: z.string().min(1, "Please select a service or enquiry type"),
   address: z.string().min(5, "Please enter a valid address"),
   city: z.string().min(1, "Please enter city"),
   instructions: z.string().optional(),
@@ -19,18 +21,53 @@ const bookingSchema = z.object({
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
 
+const CLEANING_SERVICES = [
+  "Residential Cleaning",
+  "Commercial Cleaning",
+  "Deep Cleaning",
+  "Post-Construction",
+  "Fumigation"
+];
+
+const REAL_ESTATE_ENQUIRIES = [
+  "Property Acquisition",
+  "Apartment Renting",
+  "Housing Enquiry",
+  "Property Management",
+  "Land Acquisition"
+];
+
 export default function BookingPage() {
+  const [searchParams] = useSearchParams();
+  const initialCategory = (searchParams.get('category') as 'cleaning' | 'real-estate') || 'cleaning';
+  const initialType = searchParams.get('type') || '';
+
   const [step, setStep] = React.useState(1);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
-  const { register, handleSubmit, formState: { errors }, trigger } = useForm<BookingFormValues>({
+  const { register, handleSubmit, formState: { errors }, trigger, watch, setValue } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      category: initialCategory,
+      serviceType: initialType
+    }
   });
+
+  const selectedCategory = watch('category');
+
+  React.useEffect(() => {
+    // Reset serviceType when category changes, unless it's the initial load with a valid type
+    const currentType = watch('serviceType');
+    const validServices = selectedCategory === 'cleaning' ? CLEANING_SERVICES : REAL_ESTATE_ENQUIRIES;
+    if (currentType && !validServices.includes(currentType)) {
+      setValue('serviceType', '');
+    }
+  }, [selectedCategory, setValue, watch]);
 
   const nextStep = async () => {
     let fields: (keyof BookingFormValues)[] = [];
     if (step === 1) fields = ['clientName', 'clientEmail', 'clientPhone'];
-    if (step === 2) fields = ['serviceType', 'address', 'city'];
+    if (step === 2) fields = ['category', 'serviceType', 'address', 'city'];
     
     const isValid = await trigger(fields);
     if (isValid) setStep(step + 1);
@@ -45,7 +82,7 @@ export default function BookingPage() {
           client_name: data.clientName,
           client_email: data.clientEmail,
           client_phone: data.clientPhone,
-          service_type: data.serviceType,
+          service_type: `${data.category}: ${data.serviceType}`,
           address: data.address,
           city: data.city,
           instructions: data.instructions,
@@ -67,7 +104,7 @@ export default function BookingPage() {
       <div className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-display font-bold mb-4">Request a <span className="text-primary italic">Free Quote</span></h1>
-          <p className="text-secondary/60">Professional cleaning services tailored to your needs in Kano.</p>
+          <p className="text-secondary/60">Professional services and expert property guidance in Kano.</p>
         </div>
 
         {/* Progress Bar */}
@@ -135,20 +172,49 @@ export default function BookingPage() {
                 Service & Location
               </h2>
               <div className="space-y-6 mb-12">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Service Type</label>
-                  <select {...register('serviceType')} className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none focus:ring-2 focus:ring-primary/50">
-                    <option value="">Select a service</option>
-                    <option value="Residential Cleaning">Residential Cleaning</option>
-                    <option value="Commercial Cleaning">Commercial Cleaning</option>
-                    <option value="Deep Cleaning">Deep Cleaning</option>
-                    <option value="Post-Construction">Post-Construction</option>
-                    <option value="Fumigation">Fumigation</option>
-                  </select>
-                  {errors.serviceType && <p className="text-red-500 text-xs">{errors.serviceType.message}</p>}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Category</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button 
+                        type="button"
+                        onClick={() => setValue('category', 'cleaning')}
+                        className={cn(
+                          "flex items-center justify-center space-x-2 p-4 rounded-xl border transition-all",
+                          selectedCategory === 'cleaning' ? "bg-primary text-white border-primary" : "bg-white text-secondary/60 border-primary/10 hover:border-primary/30"
+                        )}
+                      >
+                        <Sparkles size={18} />
+                        <span className="font-bold text-sm">Cleaning</span>
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => setValue('category', 'real-estate')}
+                        className={cn(
+                          "flex items-center justify-center space-x-2 p-4 rounded-xl border transition-all",
+                          selectedCategory === 'real-estate' ? "bg-primary text-white border-primary" : "bg-white text-secondary/60 border-primary/10 hover:border-primary/30"
+                        )}
+                      >
+                        <Home size={18} />
+                        <span className="font-bold text-sm">Real Estate</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">
+                      {selectedCategory === 'cleaning' ? 'Service Type' : 'Enquiry Type'}
+                    </label>
+                    <select {...register('serviceType')} className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none focus:ring-2 focus:ring-primary/50">
+                      <option value="">Select an option</option>
+                      {(selectedCategory === 'cleaning' ? CLEANING_SERVICES : REAL_ESTATE_ENQUIRIES).map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                    </select>
+                    {errors.serviceType && <p className="text-red-500 text-xs">{errors.serviceType.message}</p>}
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Service Address</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Location / Address</label>
                   <div className="relative">
                     <MapPin className="absolute left-4 top-4 text-primary/40" size={18} />
                     <textarea {...register('address')} placeholder="Street address in Kano..." className="w-full pl-12 pr-4 py-4 bg-white border border-primary/10 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 h-32"></textarea>
@@ -184,7 +250,7 @@ export default function BookingPage() {
                 </div>
                 <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
                   <p className="text-sm text-secondary/60 italic">
-                    Note: This is a request for a free quote. Our team will review your details and contact you via phone or email with a customized estimate.
+                    Note: This is a request for a free quote or enquiry session. Our team will review your details and contact you via phone or email with a customized response.
                   </p>
                 </div>
               </div>
@@ -215,11 +281,13 @@ export default function BookingPage() {
               </div>
               <h2 className="text-3xl font-display font-bold mb-4">Request Submitted!</h2>
               <p className="text-secondary/60 mb-12 max-w-md mx-auto">
-                Thank you for your interest. We've received your request for a free quote. Our team in Kano will contact you shortly to discuss the details.
+                Thank you for your interest. We've received your request. Our team in Kano will contact you shortly to discuss the details.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button onClick={() => window.location.href = '/'} className="btn-primary">Return Home</button>
-                <button onClick={() => window.location.href = '/cleaning'} className="btn-outline">View Services</button>
+                <button onClick={() => window.location.href = selectedCategory === 'cleaning' ? '/cleaning' : '/real-estate'} className="btn-outline">
+                  View {selectedCategory === 'cleaning' ? 'Services' : 'Real Estate'}
+                </button>
               </div>
             </motion.div>
           )}

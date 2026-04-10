@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
 
 export default function ContactPage() {
   return (
@@ -18,6 +18,68 @@ export default function ContactPage() {
           <p className="text-white/60 max-w-2xl mx-auto text-lg">
             Have questions about our cleaning services or real estate listings? Our team in Kano is ready to assist you.
           </p>
+        </div>
+      </section>
+
+      <section className="py-24 bg-secondary/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-16 items-center">
+            <div className="flex-1">
+              <h2 className="text-4xl font-display font-bold mb-6">Need a <span className="text-primary italic">Cleaning Quote</span>?</h2>
+              <p className="text-secondary/60 text-lg mb-8 leading-relaxed">
+                Looking for professional cleaning services in Kano? Fill out our quick quote request form and our team will get back to you with a personalized estimate within 24 hours.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Residential & Commercial Expertise",
+                  "Trained & Vetted Professionals",
+                  "Eco-friendly Cleaning Products",
+                  "Flexible Scheduling Options"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center space-x-3 text-secondary/80 font-medium">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                      <Send size={12} />
+                    </div>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex-1 w-full">
+              <div className="glass p-8 md:p-10 rounded-3xl shadow-xl border border-primary/10">
+                <h3 className="text-2xl font-display font-bold mb-6">Request a Free Quote</h3>
+                <form className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Full Name</label>
+                      <input type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="John Doe" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Phone Number</label>
+                      <input type="tel" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="+234..." />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Service Type</label>
+                    <select className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm">
+                      <option>Residential Cleaning</option>
+                      <option>Commercial Cleaning</option>
+                      <option>Deep Cleaning</option>
+                      <option>Post-Construction</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Location in Kano</label>
+                    <input type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="e.g. Nassarawa, GRA" />
+                  </div>
+                  <button type="submit" className="w-full btn-primary py-3 text-sm font-bold flex items-center justify-center space-x-2">
+                    <span>Get My Quote</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

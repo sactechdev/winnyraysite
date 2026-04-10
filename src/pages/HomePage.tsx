@@ -156,7 +156,7 @@ export default function HomePage() {
                 <h3 className="text-3xl font-display font-bold text-white mb-4">Premium Real Estate</h3>
                 <p className="text-white/70 mb-6">Discover exclusive properties in Kano and beyond. Your dream home awaits with WinnyRay.</p>
                 <Link to="/real-estate" className="inline-flex items-center text-primary font-bold hover:underline">
-                  Browse Listings <ArrowRight size={16} className="ml-2" />
+                  Property Enquiry <ArrowRight size={16} className="ml-2" />
                 </Link>
               </div>
             </motion.div>

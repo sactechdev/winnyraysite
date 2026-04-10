@@ -412,7 +412,7 @@ export default function AdminCMS() {
                   <div className="flex justify-between items-center mb-8">
                     <h3 className="text-xl font-display font-bold flex items-center">
                       <ListTodo size={20} className="mr-2 text-primary" />
-                      Cleaning Bookings
+                      All Bookings & Enquiries
                     </h3>
                     <button onClick={fetchBookings} className="text-xs font-bold text-primary uppercase tracking-widest">Refresh</button>
                   </div>
