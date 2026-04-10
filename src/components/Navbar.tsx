@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 const navItems = [
   { name: 'Home', path: '/', icon: Home },
+  { name: 'About', path: '/about', icon: Home },
   { name: 'Cleaning', path: '/cleaning', icon: Sparkles },
   { name: 'Real Estate', path: '/real-estate', icon: Home },
   { name: 'Contact', path: '/contact', icon: User },

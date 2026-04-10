@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'motion/react';
 import { Mail, Lock, ArrowRight, Github, Chrome } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/src/lib/supabase';
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -15,14 +16,36 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
+
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
-    // Handle Supabase Auth here
-    window.location.href = '/dashboard';
+  const onSubmit = async (data: LoginFormValues) => {
+    setLoading(true);
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+        });
+        if (error) throw error;
+        alert('Account created! Please check your email for confirmation.');
+      }
+      navigate('/dashboard');
+    } catch (err: any) {
+      alert(err.message || 'An error occurred during authentication');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

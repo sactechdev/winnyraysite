@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { useContent } from '@/src/lib/ContentContext';
 
 export default function Footer() {
+  const { content } = useContent();
+
   return (
     <footer className="bg-secondary text-white pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,9 +19,9 @@ export default function Footer() {
               Excellence in every detail, integrity in every transaction.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-white/40 hover:text-primary transition-colors"><Facebook size={20} /></a>
-              <a href="#" className="text-white/40 hover:text-primary transition-colors"><Instagram size={20} /></a>
-              <a href="#" className="text-white/40 hover:text-primary transition-colors"><Twitter size={20} /></a>
+              <a href={content.social_links.facebook} className="text-white/40 hover:text-primary transition-colors"><Facebook size={20} /></a>
+              <a href={content.social_links.instagram} className="text-white/40 hover:text-primary transition-colors"><Instagram size={20} /></a>
+              <a href={content.social_links.twitter} className="text-white/40 hover:text-primary transition-colors"><Twitter size={20} /></a>
             </div>
           </div>
 
@@ -37,7 +40,6 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-white/60">
               <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
-              <li><Link to="/careers" className="hover:text-primary transition-colors">Careers</Link></li>
               <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
@@ -47,15 +49,15 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-white/60">
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary shrink-0" />
-                <span>15 Bravo Close Zungeru by kwakwachi, Kano</span>
+                <span>{content.contact_info.address}</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={18} className="text-primary shrink-0" />
-                <span>+234 800 WINNYRAY</span>
+                <span>{content.contact_info.phone}</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={18} className="text-primary shrink-0" />
-                <span>info@winnyray.com.ng</span>
+                <span>{content.contact_info.email}</span>
               </li>
             </ul>
           </div>

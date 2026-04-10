@@ -35,6 +35,18 @@ interface SiteContent {
       link: string;
     }[];
   };
+  about: {
+    title: string;
+    content: string;
+    mission: string;
+    vision: string;
+    image: string;
+  };
+  privacy_policy: {
+    title: string;
+    content: string;
+    last_updated: string;
+  };
 }
 
 const defaultContent: SiteContent = {
@@ -84,6 +96,18 @@ const defaultContent: SiteContent = {
         link: "/real-estate"
       }
     ]
+  },
+  about: {
+    title: "About WinnyRay Nigeria Limited",
+    content: "WinnyRay Nigeria Limited is a premier service provider based in Kano, specializing in professional cleaning and luxury real estate. We are committed to excellence, integrity, and customer satisfaction.",
+    mission: "To provide world-class cleaning and real estate services that enhance the quality of life for our clients.",
+    vision: "To be the most trusted and preferred service provider in Nigeria.",
+    image: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=1000"
+  },
+  privacy_policy: {
+    title: "Privacy Policy",
+    content: "Your privacy is important to us. This policy explains how we collect, use, and protect your personal information...",
+    last_updated: "April 10, 2026"
   }
 };
 

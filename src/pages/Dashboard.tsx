@@ -14,25 +14,58 @@ import {
   Clock,
   AlertCircle,
   MapPin,
-  ArrowRight
+  ArrowRight,
+  LogOut
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/src/lib/utils';
+import { supabase } from '@/src/lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = React.useState('overview');
+  const [user, setUser] = React.useState<any>(null);
+  const [bookings, setBookings] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    setUser(user);
+    fetchUserBookings(user.email!);
+  };
+
+  const fetchUserBookings = async (email: string) => {
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('client_email', email)
+      .order('created_at', { ascending: false });
+    
+    if (data) setBookings(data);
+    setLoading(false);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
 
   const stats = [
-    { label: 'Active Bookings', value: '12', icon: Calendar, color: 'text-blue-500' },
-    { label: 'Properties Interested', value: '4', icon: Home, color: 'text-primary' },
-    { label: 'Total Spent', value: '₦1.2M', icon: TrendingUp, color: 'text-green-500' },
-    { label: 'Notifications', value: '3', icon: Bell, color: 'text-red-500' },
+    { label: 'My Bookings', value: bookings.length.toString(), icon: Calendar, color: 'text-blue-500' },
+    { label: 'Properties Interested', value: '0', icon: Home, color: 'text-primary' },
+    { label: 'Total Spent', value: '₦0', icon: TrendingUp, color: 'text-green-500' },
+    { label: 'Notifications', value: '0', icon: Bell, color: 'text-red-500' },
   ];
 
-  const recentBookings = [
-    { id: 'BK-1024', service: 'Deep Cleaning', date: 'Oct 24, 2023', status: 'Completed', amount: 45000 },
-    { id: 'BK-1025', service: 'Office Maintenance', date: 'Oct 28, 2023', status: 'Upcoming', amount: 120000 },
-    { id: 'BK-1026', service: 'Standard Cleaning', date: 'Nov 02, 2023', status: 'Pending', amount: 25000 },
-  ];
+  if (loading) return <div className="pt-40 text-center">Loading Dashboard...</div>;
 
   return (
     <div className="pt-20 min-h-screen bg-secondary/5 flex">
@@ -58,6 +91,13 @@ export default function Dashboard() {
               <span>{item.label}</span>
             </button>
           ))}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
         </div>
 
         <div className="mt-auto p-4 rounded-2xl bg-primary/5 border border-primary/10">
@@ -71,7 +111,7 @@ export default function Dashboard() {
       <main className="flex-1 p-6 lg:p-12 overflow-y-auto">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
           <div>
-            <h1 className="text-3xl font-display font-bold">Welcome back, <span className="text-primary italic">Winny</span></h1>
+            <h1 className="text-3xl font-display font-bold">Welcome back, <span className="text-primary italic">{user?.email?.split('@')[0]}</span></h1>
             <p className="text-secondary/60">Here's what's happening with your account today.</p>
           </div>
           <div className="flex items-center space-x-4">
@@ -84,7 +124,7 @@ export default function Dashboard() {
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
             <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/20 overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" alt="Avatar" referrerPolicy="no-referrer" />
+              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" referrerPolicy="no-referrer" />
             </div>
           </div>
         </header>
@@ -103,7 +143,6 @@ export default function Dashboard() {
                 <div className={cn("p-3 rounded-xl bg-opacity-10", stat.color.replace('text-', 'bg-'))}>
                   <stat.icon size={24} className={stat.color} />
                 </div>
-                <span className="text-xs font-bold text-green-500">+12%</span>
               </div>
               <p className="text-sm font-bold text-secondary/40 uppercase tracking-widest mb-1">{stat.label}</p>
               <p className="text-2xl font-display font-bold">{stat.value}</p>
@@ -116,7 +155,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-2xl shadow-sm border border-primary/5 overflow-hidden">
               <div className="p-6 border-b border-primary/5 flex justify-between items-center">
-                <h3 className="font-display font-bold text-xl">Recent Bookings</h3>
+                <h3 className="font-display font-bold text-xl">My Bookings</h3>
                 <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">View All</button>
               </div>
               <div className="overflow-x-auto">
@@ -124,31 +163,35 @@ export default function Dashboard() {
                   <thead>
                     <tr className="bg-secondary/5 text-secondary/40 text-xs font-bold uppercase tracking-widest">
                       <th className="px-6 py-4">Service</th>
-                      <th className="px-6 py-4">Date</th>
+                      <th className="px-6 py-4">Address</th>
                       <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4">Amount</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-primary/5">
-                    {recentBookings.map((booking) => (
-                      <tr key={booking.id} className="hover:bg-primary/5 transition-colors cursor-pointer">
-                        <td className="px-6 py-4">
-                          <p className="font-bold text-sm">{booking.service}</p>
-                          <p className="text-xs text-secondary/40">{booking.id}</p>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-secondary/60">{booking.date}</td>
-                        <td className="px-6 py-4">
-                          <span className={cn(
-                            "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
-                            booking.status === 'Completed' ? "bg-green-100 text-green-600" :
-                            booking.status === 'Upcoming' ? "bg-blue-100 text-blue-600" : "bg-yellow-100 text-yellow-600"
-                          )}>
-                            {booking.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 font-bold text-sm">{formatCurrency(booking.amount)}</td>
+                    {bookings.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="px-6 py-12 text-center text-secondary/40 italic">No bookings found.</td>
                       </tr>
-                    ))}
+                    ) : (
+                      bookings.map((booking) => (
+                        <tr key={booking.id} className="hover:bg-primary/5 transition-colors cursor-pointer">
+                          <td className="px-6 py-4">
+                            <p className="font-bold text-sm">{booking.service_type}</p>
+                            <p className="text-xs text-secondary/40">{new Date(booking.created_at).toLocaleDateString()}</p>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-secondary/60">{booking.address}, {booking.city}</td>
+                          <td className="px-6 py-4">
+                            <span className={cn(
+                              "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
+                              booking.status === 'completed' ? "bg-green-100 text-green-600" :
+                              booking.status === 'pending' ? "bg-yellow-100 text-yellow-600" : "bg-blue-100 text-blue-600"
+                            )}>
+                              {booking.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -157,31 +200,29 @@ export default function Dashboard() {
 
           <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow-sm border border-primary/5 p-6">
-              <h3 className="font-display font-bold text-xl mb-6">Upcoming Service</h3>
+              <h3 className="font-display font-bold text-xl mb-6">Quote Status</h3>
               <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 space-y-4">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm">
                     <Clock size={24} />
                   </div>
                   <div>
-                    <p className="font-bold">Office Maintenance</p>
-                    <p className="text-xs text-secondary/40">Oct 28, 2023 • 10:00 AM</p>
+                    <p className="font-bold">Pending Review</p>
+                    <p className="text-xs text-secondary/40">Our team is reviewing your request.</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2 text-xs text-secondary/60">
-                  <MapPin size={14} className="text-primary" />
-                  <span>Victoria Island, Lagos</span>
-                </div>
-                <button className="w-full btn-primary py-2 text-xs">Reschedule</button>
+                <p className="text-xs text-secondary/60">
+                  Once reviewed, you will receive a quote via email or phone.
+                </p>
               </div>
             </div>
 
             <div className="bg-secondary text-white rounded-2xl shadow-sm p-6 relative overflow-hidden">
               <div className="relative z-10">
-                <h3 className="font-display font-bold text-xl mb-2">Premium Member</h3>
-                <p className="text-white/60 text-xs mb-6">You're currently on the Gold tier. Enjoy exclusive real estate previews.</p>
-                <button className="text-primary text-xs font-bold uppercase tracking-widest flex items-center">
-                  Upgrade Tier <ArrowRight size={14} className="ml-1" />
+                <h3 className="font-display font-bold text-xl mb-2">Need a Quote?</h3>
+                <p className="text-white/60 text-xs mb-6">Request a free estimate for your next cleaning project.</p>
+                <button onClick={() => navigate('/booking')} className="text-primary text-xs font-bold uppercase tracking-widest flex items-center">
+                  Book Now <ArrowRight size={14} className="ml-1" />
                 </button>
               </div>
               <div className="absolute -right-4 -bottom-4 opacity-10">

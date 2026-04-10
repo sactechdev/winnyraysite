@@ -15,6 +15,8 @@ import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import ContactPage from './pages/ContactPage';
 import AdminCMS from './pages/AdminCMS';
+import AboutPage from './pages/AboutPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import { ContentProvider } from './lib/ContentContext';
 
 export default function App() {
@@ -34,6 +36,8 @@ export default function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/dashboard/*" element={<Dashboard />} />
               <Route path="/admin/cms" element={<AdminCMS />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
             </Routes>
           </main>
           <Footer />
