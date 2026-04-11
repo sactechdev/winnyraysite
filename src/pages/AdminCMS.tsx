@@ -255,6 +255,18 @@ export default function AdminCMS() {
                   <div className="space-y-8">
                     {formData.services.cleaning.map((service, index) => (
                       <div key={index} className="p-6 rounded-2xl bg-white/50 border border-primary/10 space-y-4">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-bold">Service #{index + 1}</h4>
+                          <button 
+                            onClick={() => {
+                              const newCleaning = formData.services.cleaning.filter((_, i) => i !== index);
+                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                            }}
+                            className="text-red-500 text-xs font-bold uppercase tracking-widest"
+                          >
+                            Remove
+                          </button>
+                        </div>
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Service Title</label>
                           <input 
@@ -266,6 +278,18 @@ export default function AdminCMS() {
                               setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Description</label>
+                          <textarea 
+                            value={service.desc}
+                            onChange={(e) => {
+                              const newCleaning = [...formData.services.cleaning];
+                              newCleaning[index].desc = e.target.value;
+                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                            }}
+                            className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none h-24" 
                           />
                         </div>
                         <div className="space-y-2">
@@ -296,6 +320,15 @@ export default function AdminCMS() {
                         </div>
                       </div>
                     ))}
+                    <button 
+                      onClick={() => {
+                        const newCleaning = [...formData.services.cleaning, { title: '', desc: '', image: '', features: [] }];
+                        setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                      }}
+                      className="w-full py-4 border-2 border-dashed border-primary/20 rounded-2xl text-primary font-bold hover:bg-primary/5 transition-all"
+                    >
+                      + Add New Cleaning Service
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -309,6 +342,18 @@ export default function AdminCMS() {
                   <div className="space-y-8">
                     {formData.services.real_estate.map((service, index) => (
                       <div key={index} className="p-6 rounded-2xl bg-white/50 border border-primary/10 space-y-4">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-bold">Section #{index + 1}</h4>
+                          <button 
+                            onClick={() => {
+                              const newRE = formData.services.real_estate.filter((_, i) => i !== index);
+                              setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                            }}
+                            className="text-red-500 text-xs font-bold uppercase tracking-widest"
+                          >
+                            Remove
+                          </button>
+                        </div>
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Section Title</label>
                           <input 
@@ -349,6 +394,15 @@ export default function AdminCMS() {
                         </div>
                       </div>
                     ))}
+                    <button 
+                      onClick={() => {
+                        const newRE = [...formData.services.real_estate, { title: '', desc: '', image: '', link: '/booking?category=real-estate' }];
+                        setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                      }}
+                      className="w-full py-4 border-2 border-dashed border-primary/20 rounded-2xl text-primary font-bold hover:bg-primary/5 transition-all"
+                    >
+                      + Add New Real Estate Section
+                    </button>
                   </div>
                 </div>
               </motion.div>
