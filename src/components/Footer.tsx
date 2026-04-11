@@ -11,8 +11,14 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-6">
-            <Link to="/" className="text-2xl font-display font-bold text-primary">
-              WINNYRAY
+            <Link to="/" className="flex items-center space-x-3">
+              <img 
+                src={content.logo_url} 
+                alt="WinnyRay Logo" 
+                className="h-10 w-auto brightness-0 invert"
+                referrerPolicy="no-referrer"
+              />
+              <span className="text-2xl font-display font-bold text-primary">WINNYRAY</span>
             </Link>
             <p className="text-white/60 text-sm leading-relaxed">
               Nigeria's premier provider of professional cleaning and luxury real estate services. 

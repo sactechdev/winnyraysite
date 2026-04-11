@@ -47,6 +47,7 @@ interface SiteContent {
     content: string;
     last_updated: string;
   };
+  logo_url: string;
 }
 
 const defaultContent: SiteContent = {
@@ -108,7 +109,8 @@ const defaultContent: SiteContent = {
     title: "Privacy Policy",
     content: "Your privacy is important to us. This policy explains how we collect, use, and protect your personal information...",
     last_updated: "April 10, 2026"
-  }
+  },
+  logo_url: "https://winnyray.com.ng/wp-content/uploads/2023/05/cropped-WinnyRay-Logo-1.png"
 };
 
 const ContentContext = createContext<{
@@ -148,6 +150,16 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     fetchContent();
   }, []);
+
+  useEffect(() => {
+    if (content.logo_url) {
+      const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      link.type = 'image/x-icon';
+      link.rel = 'shortcut icon';
+      link.href = content.logo_url;
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+  }, [content.logo_url]);
 
   const updateContent = async (newContent: Partial<SiteContent>) => {
     const updated = { ...content, ...newContent };

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Sparkles, User, LogOut } from 'lucide-react';
+import { Menu, X, Home, Sparkles, User, LogOut, Settings } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { useContent } from '@/src/lib/ContentContext';
+import { supabase } from '@/src/lib/supabase';
 
 const navItems = [
   { name: 'Home', path: '/', icon: Home },
@@ -10,12 +12,40 @@ const navItems = [
   { name: 'Cleaning', path: '/cleaning', icon: Sparkles },
   { name: 'Real Estate', path: '/real-estate', icon: Home },
   { name: 'Contact', path: '/contact', icon: User },
-  { name: 'CMS', path: '/admin/cms', icon: User },
 ];
 
 export default function Navbar() {
+  const { content } = useContent();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
   const location = useLocation();
+
+  React.useEffect(() => {
+    async function checkAdmin() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        setIsAdmin(profile?.role === 'admin');
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    checkAdmin();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        checkAdmin();
+      } else {
+        setIsAdmin(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-primary/10">
@@ -24,15 +54,10 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
               <img 
-                src="https://ais-dev-4f5wuijwhxhi2tuo2bq2cn-41192636823.europe-west3.run.app/logo.png" 
+                src={content.logo_url} 
                 alt="WinnyRay Logo" 
                 className="h-12 w-auto"
                 referrerPolicy="no-referrer"
-                onError={(e) => {
-                  // Fallback if image fails
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
               />
               <div className="hidden">
                 <span className="text-2xl font-display font-bold gold-gradient bg-clip-text text-transparent">
@@ -64,6 +89,17 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary",
+                  location.pathname === "/admin" ? "text-primary" : "text-secondary/70"
+                )}
+              >
+                Admin CMS
+              </Link>
+            )}
             <Link to="/booking" className="btn-primary py-2 px-6 text-sm">
               Request Quote
             </Link>
@@ -105,6 +141,19 @@ export default function Navbar() {
                   <span>{item.name}</span>
                 </Link>
               ))}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    "flex items-center space-x-3 px-3 py-4 rounded-md text-base font-medium",
+                    location.pathname === "/admin" ? "bg-primary/10 text-primary" : "text-secondary/70"
+                  )}
+                >
+                  <Settings size={20} />
+                  <span>Admin CMS</span>
+                </Link>
+              )}
               <div className="pt-4">
                 <Link
                   to="/booking"

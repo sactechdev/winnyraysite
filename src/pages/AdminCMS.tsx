@@ -1,15 +1,18 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Save, Layout, Phone, Share2, Sparkles, Home, LogOut, Info, Shield, ListTodo } from 'lucide-react';
+import { Save, Layout, Phone, Share2, Sparkles, Home, LogOut, Info, Shield, ListTodo, Settings, Upload, Globe } from 'lucide-react';
 import { useContent } from '@/src/lib/ContentContext';
 import { cn } from '@/src/lib/utils';
 import { supabase } from '@/src/lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminCMS() {
   const { content, updateContent, loading } = useContent();
+  const navigate = useNavigate();
   const [formData, setFormData] = React.useState(content);
-  const [activeTab, setActiveTab] = React.useState<'contact' | 'hero' | 'cleaning' | 'real_estate' | 'about' | 'privacy' | 'bookings'>('contact');
+  const [activeTab, setActiveTab] = React.useState<'contact' | 'hero' | 'cleaning' | 'real_estate' | 'about' | 'privacy' | 'bookings' | 'settings'>('contact');
   const [bookings, setBookings] = React.useState<any[]>([]);
+  const [isUploading, setIsUploading] = React.useState(false);
 
   React.useEffect(() => {
     setFormData(content);
@@ -34,6 +37,41 @@ export default function AdminCMS() {
   const handleSave = async () => {
     await updateContent(formData);
     alert('Content updated successfully!');
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `logo-${Math.random()}.${fileExt}`;
+      const filePath = `public/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('site-assets')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('site-assets')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, logo_url: publicUrl });
+      alert('Logo uploaded! Remember to save changes.');
+    } catch (error: any) {
+      console.error('Error uploading logo:', error);
+      alert('Upload failed: ' + error.message + '\nMake sure a "site-assets" bucket exists in Supabase Storage.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const TabButton = ({ id, icon: Icon, label }: { id: any, icon: any, label: string }) => (
@@ -79,8 +117,16 @@ export default function AdminCMS() {
             <TabButton id="real_estate" icon={Home} label="Real Estate" />
             <TabButton id="about" icon={Info} label="About Company" />
             <TabButton id="privacy" icon={Shield} label="Privacy Policy" />
-            <div className="pt-4 mt-4 border-t border-primary/10">
+            <TabButton id="settings" icon={Settings} label="Site Settings" />
+            <div className="pt-4 mt-4 border-t border-primary/10 space-y-2">
               <TabButton id="bookings" icon={ListTodo} label="View Bookings" />
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center space-x-3 px-6 py-4 rounded-2xl transition-all font-bold text-left bg-red-50 text-red-600 hover:bg-red-100"
+              >
+                <LogOut size={20} />
+                <span>Log Out</span>
+              </button>
             </div>
           </div>
 
@@ -480,6 +526,62 @@ export default function AdminCMS() {
                         onChange={(e) => setFormData({ ...formData, privacy_policy: { ...formData.privacy_policy, content: e.target.value } })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none h-96" 
                       />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'settings' && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+                <div className="glass p-8 rounded-3xl shadow-xl">
+                  <h3 className="text-xl font-display font-bold mb-6 flex items-center">
+                    <Globe size={20} className="mr-2 text-primary" />
+                    General Settings
+                  </h3>
+                  <div className="space-y-8">
+                    <div className="space-y-4">
+                      <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Website Logo & Favicon</label>
+                      <div className="flex items-center space-x-8 p-6 bg-white/50 border border-primary/10 rounded-2xl">
+                        <div className="w-24 h-24 bg-white rounded-xl border border-primary/10 flex items-center justify-center overflow-hidden">
+                          {formData.logo_url ? (
+                            <img src={formData.logo_url} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                          ) : (
+                            <Settings size={32} className="text-primary/20" />
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-4">
+                          <div className="flex items-center space-x-4">
+                            <label className="btn-outline cursor-pointer flex items-center space-x-2 py-2 px-4 text-sm">
+                              <Upload size={16} />
+                              <span>{isUploading ? 'Uploading...' : 'Upload New Logo'}</span>
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden" 
+                                onChange={handleLogoUpload}
+                                disabled={isUploading}
+                              />
+                            </label>
+                            <p className="text-xs text-secondary/40 italic">Recommended: PNG or SVG with transparent background.</p>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Logo URL (Direct Link)</label>
+                            <input 
+                              type="text" 
+                              value={formData.logo_url}
+                              onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                              className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none text-sm" 
+                              placeholder="https://example.com/logo.png"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
+                        <p className="text-xs text-secondary/60">
+                          <strong>Note:</strong> The uploaded logo is automatically used as the website's favicon (the icon shown in browser tabs).
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
