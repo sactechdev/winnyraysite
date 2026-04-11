@@ -15,7 +15,8 @@ import {
   AlertCircle,
   MapPin,
   ArrowRight,
-  LogOut
+  LogOut,
+  ShieldCheck
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/src/lib/utils';
 import { supabase } from '@/src/lib/supabase';
@@ -24,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Dashboard() {
   const [activeTab, setActiveTab] = React.useState('overview');
   const [user, setUser] = React.useState<any>(null);
+  const [profile, setProfile] = React.useState<any>(null);
   const [bookings, setBookings] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
@@ -39,6 +41,14 @@ export default function Dashboard() {
       return;
     }
     setUser(user);
+    
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    
+    setProfile(profile);
     fetchUserBookings(user.email!);
   };
 
@@ -91,6 +101,17 @@ export default function Dashboard() {
               <span>{item.label}</span>
             </button>
           ))}
+          
+          {(profile?.role === 'admin' || user?.email === 'sactechcomputers@gmail.com') && (
+            <button
+              onClick={() => navigate('/admin')}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold text-primary hover:bg-primary/5 transition-all"
+            >
+              <ShieldCheck size={18} />
+              <span>Admin CMS</span>
+            </button>
+          )}
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"

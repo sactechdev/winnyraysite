@@ -29,7 +29,9 @@ export default function Navbar() {
           .select('role')
           .eq('id', session.user.id)
           .single();
-        setIsAdmin(profile?.role === 'admin');
+        
+        const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
+        setIsAdmin(profile?.role === 'admin' || isEmailAdmin);
       } else {
         setIsAdmin(false);
       }

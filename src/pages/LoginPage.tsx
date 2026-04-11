@@ -23,6 +23,28 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  React.useEffect(() => {
+    async function checkExistingSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        
+        const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
+        
+        if (profile?.role === 'admin' || isEmailAdmin) {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      }
+    }
+    checkExistingSession();
+  }, [navigate]);
+
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
     try {
@@ -40,7 +62,10 @@ export default function LoginPage() {
             .eq('id', session.user.id)
             .single();
           
-          if (profile?.role === 'admin') {
+          // Fallback for the primary admin email
+          const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
+          
+          if (profile?.role === 'admin' || isEmailAdmin) {
             navigate('/admin');
             return;
           }
