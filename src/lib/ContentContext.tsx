@@ -87,6 +87,18 @@ const defaultContent: SiteContent = {
         desc: "Standard, deep, and move-in/out cleaning for your home.",
         image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&q=80&w=800",
         features: ["Standard Cleaning", "Deep Cleaning", "Move-in/Out"]
+      },
+      {
+        title: "Commercial Cleaning",
+        desc: "Professional cleaning for offices, warehouses, and retail spaces.",
+        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800",
+        features: ["Office Cleaning", "Industrial Cleaning", "Post-Construction"]
+      },
+      {
+        title: "Specialized Cleaning",
+        desc: "Expert care for carpets, windows, and high-touch surfaces.",
+        image: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&q=80&w=800",
+        features: ["Carpet Cleaning", "Window Washing", "Disinfection"]
       }
     ],
     real_estate: [
@@ -94,6 +106,18 @@ const defaultContent: SiteContent = {
         title: "Premium Real Estate",
         desc: "Discover exclusive properties in Kano and beyond.",
         image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000",
+        link: "/real-estate"
+      },
+      {
+        title: "Property Management",
+        desc: "Professional management for your real estate investments.",
+        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1000",
+        link: "/real-estate"
+      },
+      {
+        title: "Real Estate Advisory",
+        desc: "Expert guidance for property acquisition and investment.",
+        image: "https://images.unsplash.com/photo-1454165833767-027ff33027ef?auto=format&fit=crop&q=80&w=1000",
         link: "/real-estate"
       }
     ]
