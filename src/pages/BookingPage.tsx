@@ -31,7 +31,6 @@ export default function BookingPage() {
   const REAL_ESTATE_ENQUIRIES = content.services.real_estate.map(s => s.title);
 
   const initialCategory = (searchParams.get('category') as 'cleaning' | 'real-estate') || 'cleaning';
-  const initialCategory = (searchParams.get('category') as 'cleaning' | 'real-estate') || 'cleaning';
   const initialType = searchParams.get('type') || '';
 
   const [step, setStep] = React.useState(1);
