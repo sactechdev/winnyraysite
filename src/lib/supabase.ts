@@ -10,29 +10,29 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
- * SQL for creating the bookings table in Supabase:
+ * SUPABASE SCHEMA SETUP
  * 
- * create table bookings (
- *   id uuid default uuid_generate_v4() primary key,
- *   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
- *   client_name text not null,
- *   client_email text,
- *   client_phone text not null,
- *   service_type text not null,
- *   address text not null,
- *   city text not null,
- *   instructions text,
- *   status text default 'pending'
+ * For full database schema including tables for bookings, site settings, 
+ * properties, and user profiles, please refer to the 'supabase-schema.sql' 
+ * file in the project root.
+ * 
+ * Quick Start for Bookings Table:
+ * 
+ * CREATE TABLE bookings (
+ *   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+ *   created_at TIMESTAMPTZ DEFAULT now(),
+ *   client_name TEXT NOT NULL,
+ *   client_email TEXT,
+ *   client_phone TEXT NOT NULL,
+ *   service_type TEXT NOT NULL,
+ *   address TEXT,
+ *   city TEXT DEFAULT 'Kano',
+ *   instructions TEXT,
+ *   status TEXT DEFAULT 'pending'
  * );
  * 
- * -- Enable RLS
- * alter table bookings enable row level security;
- * 
- * -- Create policy to allow anyone to insert (for the quote form)
- * create policy "Allow public insert" on bookings for insert with check (true);
- * 
- * -- Create policy to allow authenticated users to select (for admin dashboard)
- * create policy "Allow auth select" on bookings for select using (auth.role() = 'authenticated');
+ * ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+ * CREATE POLICY "Allow public insert" ON bookings FOR INSERT WITH CHECK (true);
  */
 
 export type UserRole = 'admin' | 'customer' | 'agent';

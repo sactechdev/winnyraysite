@@ -23,7 +23,7 @@ const propertyData = {
   ],
   agent: {
     name: "WinnyRay Premium",
-    phone: "+234 800 WINNYRAY",
+    phone: "+234 703 698 1080",
     email: "realestate@winnyray.com.ng",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200"
   }

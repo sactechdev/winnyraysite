@@ -64,8 +64,8 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <Link to="/login" className="btn-primary py-2 px-6 text-sm">
-              Client Portal
+            <Link to="/booking" className="btn-primary py-2 px-6 text-sm">
+              Request Quote
             </Link>
           </div>
 
@@ -107,11 +107,11 @@ export default function Navbar() {
               ))}
               <div className="pt-4">
                 <Link
-                  to="/login"
+                  to="/booking"
                   onClick={() => setIsOpen(false)}
                   className="block w-full text-center btn-primary"
                 >
-                  Client Portal
+                  Request Quote
                 </Link>
               </div>
             </div>

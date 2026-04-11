@@ -8,6 +8,8 @@ import { cn } from '@/src/lib/utils';
 import { supabase } from '@/src/lib/supabase';
 import { useSearchParams } from 'react-router-dom';
 
+import { useContent } from '@/src/lib/ContentContext';
+
 const bookingSchema = z.object({
   clientName: z.string().min(2, "Please enter your full name"),
   clientEmail: z.string().email("Please enter a valid email"),
@@ -21,25 +23,14 @@ const bookingSchema = z.object({
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
 
-const CLEANING_SERVICES = [
-  "Residential Cleaning",
-  "Commercial Cleaning",
-  "Deep Cleaning",
-  "Post-Construction",
-  "Fumigation",
-  "Outsourcing recruitment services for both domestic and commercial market"
-];
-
-const REAL_ESTATE_ENQUIRIES = [
-  "Property Acquisition",
-  "Apartment Renting",
-  "Housing Enquiry",
-  "Property Management",
-  "Land Acquisition"
-];
-
 export default function BookingPage() {
+  const { content, loading } = useContent();
   const [searchParams] = useSearchParams();
+
+  const CLEANING_SERVICES = content.services.cleaning.map(s => s.title);
+  const REAL_ESTATE_ENQUIRIES = content.services.real_estate.map(s => s.title);
+
+  const initialCategory = (searchParams.get('category') as 'cleaning' | 'real-estate') || 'cleaning';
   const initialCategory = (searchParams.get('category') as 'cleaning' | 'real-estate') || 'cleaning';
   const initialType = searchParams.get('type') || '';
 
@@ -56,6 +47,8 @@ export default function BookingPage() {
   });
 
   const selectedCategory = watch('category');
+
+  if (loading) return <div className="pt-40 text-center">Loading...</div>;
 
   React.useEffect(() => {
     // Reset serviceType when category changes, unless it's the initial load with a valid type

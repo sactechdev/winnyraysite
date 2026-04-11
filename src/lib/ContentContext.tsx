@@ -52,7 +52,7 @@ interface SiteContent {
 const defaultContent: SiteContent = {
   contact_info: {
     address: "15 Bravo Close Zungeru by kwakwachi, Kano",
-    phone: "+234 800 WINNYRAY",
+    phone: "+234 703 698 1080, +234 813 473 9747, +234 907 772 7119",
     email: "info@winnyray.com.ng",
     working_hours: "Mon - Fri: 8:00 AM - 6:00 PM"
   },

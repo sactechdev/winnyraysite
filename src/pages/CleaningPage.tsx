@@ -3,31 +3,14 @@ import { motion } from 'motion/react';
 import { CheckCircle2, ArrowRight, Home, Building2, Sparkles, Paintbrush, Wind } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const categories = [
-  {
-    title: "Residential Cleaning",
-    icon: Home,
-    desc: "Standard, deep, and move-in/out cleaning for your home.",
-    features: ["Standard Cleaning", "Deep Cleaning", "Move-in/Out", "Post-Construction"],
-    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&q=80&w=800"
-  },
-  {
-    title: "Commercial Cleaning",
-    icon: Building2,
-    desc: "Professional maintenance for offices, retail, and clinics.",
-    features: ["Office Maintenance", "Retail Spaces", "Medical Clinics", "Janitorial Services"],
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"
-  },
-  {
-    title: "Specialized Services",
-    icon: Sparkles,
-    desc: "Expert care for upholstery, windows, and post-construction.",
-    features: ["Upholstery Cleaning", "Window Cleaning", "Carpet Shampooing", "Fumigation", "Outsourcing Recruitment"],
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800"
-  }
-];
+import { useContent } from '@/src/lib/ContentContext';
 
 export default function CleaningPage() {
+  const { content, loading } = useContent();
+
+  if (loading) return <div className="pt-40 text-center">Loading...</div>;
+
+  const categories = content.services.cleaning;
   return (
     <div className="pt-20">
       {/* Header */}
@@ -69,7 +52,6 @@ export default function CleaningPage() {
                 </div>
                 <div className="p-8">
                   <div className="flex items-center space-x-3 mb-4">
-                    <cat.icon className="text-primary" size={28} />
                     <h3 className="text-2xl font-display font-bold">{cat.title}</h3>
                   </div>
                   <p className="text-secondary/60 mb-6">{cat.desc}</p>

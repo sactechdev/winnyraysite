@@ -269,15 +269,29 @@ export default function AdminCMS() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Description</label>
-                          <textarea 
-                            value={service.desc}
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Image URL</label>
+                          <input 
+                            type="text" 
+                            value={service.image}
                             onChange={(e) => {
                               const newCleaning = [...formData.services.cleaning];
-                              newCleaning[index].desc = e.target.value;
+                              newCleaning[index].image = e.target.value;
                               setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
                             }}
-                            className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none h-24" 
+                            className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Features (comma separated)</label>
+                          <input 
+                            type="text" 
+                            value={service.features.join(', ')}
+                            onChange={(e) => {
+                              const newCleaning = [...formData.services.cleaning];
+                              newCleaning[index].features = e.target.value.split(',').map(s => s.trim());
+                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                            }}
+                            className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
                           />
                         </div>
                       </div>
@@ -306,6 +320,18 @@ export default function AdminCMS() {
                               setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Description</label>
+                          <textarea 
+                            value={service.desc}
+                            onChange={(e) => {
+                              const newRE = [...formData.services.real_estate];
+                              newRE[index].desc = e.target.value;
+                              setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                            }}
+                            className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none h-24" 
                           />
                         </div>
                         <div className="space-y-2">

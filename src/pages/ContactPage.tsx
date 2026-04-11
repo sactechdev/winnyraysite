@@ -3,9 +3,14 @@ import { motion } from 'motion/react';
 import { Mail, Phone, MapPin, Clock, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
 
+import { useContent } from '@/src/lib/ContentContext';
+
 export default function ContactPage() {
+  const { content, loading } = useContent();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+
+  if (loading) return <div className="pt-40 text-center">Loading...</div>;
 
   const handleQuoteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -148,7 +153,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Our Office</h4>
-                      <p className="text-secondary/60">15 Bravo Close Zungeru by kwakwachi, Kano</p>
+                      <p className="text-secondary/60">{content.contact_info.address}</p>
                     </div>
                   </div>
 
@@ -158,9 +163,9 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Phone Number</h4>
-                      <p className="text-secondary/60">+234 703 698 1080</p>
-                      <p className="text-secondary/60">+234 813 473 9747</p>
-                      <p className="text-secondary/60">+234 907 772 7119</p>
+                      {content.contact_info.phone.split(',').map((p, i) => (
+                        <p key={i} className="text-secondary/60">{p.trim()}</p>
+                      ))}
                     </div>
                   </div>
 
@@ -170,8 +175,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Email Address</h4>
-                      <p className="text-secondary/60">info@winnyray.com.ng</p>
-                      <p className="text-secondary/60">support@winnyray.com.ng</p>
+                      <p className="text-secondary/60">{content.contact_info.email}</p>
                     </div>
                   </div>
 
@@ -181,8 +185,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Working Hours</h4>
-                      <p className="text-secondary/60">Mon - Fri: 8:00 AM - 6:00 PM</p>
-                      <p className="text-secondary/60">Sat: 9:00 AM - 4:00 PM</p>
+                      <p className="text-secondary/60">{content.contact_info.working_hours}</p>
                     </div>
                   </div>
                 </div>

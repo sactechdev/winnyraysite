@@ -3,27 +3,14 @@ import { motion } from 'motion/react';
 import { Search, MapPin, Home, ArrowRight, Building2, Key, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { useContent } from '@/src/lib/ContentContext';
+
 export default function RealEstatePage() {
-  const enquiryTypes = [
-    {
-      title: "Property Acquisition",
-      icon: Home,
-      desc: "Enquire about buying premium residential or commercial properties in Kano and beyond.",
-      link: "/booking?category=real-estate&type=acquisition"
-    },
-    {
-      title: "Apartment Renting",
-      icon: Key,
-      desc: "Find your next luxury home or office space with our exclusive rental assistance.",
-      link: "/booking?category=real-estate&type=renting"
-    },
-    {
-      title: "Housing Enquiries",
-      icon: HelpCircle,
-      desc: "General questions about the real estate market, land acquisition, or property management.",
-      link: "/booking?category=real-estate&type=general"
-    }
-  ];
+  const { content, loading } = useContent();
+
+  if (loading) return <div className="pt-40 text-center">Loading...</div>;
+
+  const enquiryTypes = content.services.real_estate;
 
   return (
     <div className="pt-20">
@@ -80,13 +67,13 @@ export default function RealEstatePage() {
                 className="glass p-10 rounded-3xl border border-primary/10 hover:border-primary/30 transition-all group"
               >
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-8 group-hover:bg-primary group-hover:text-white transition-colors">
-                  <type.icon size={32} />
+                  <Home size={32} />
                 </div>
                 <h3 className="text-2xl font-display font-bold mb-4">{type.title}</h3>
                 <p className="text-secondary/60 mb-8 leading-relaxed">
                   {type.desc}
                 </p>
-                <Link to={type.link} className="text-primary font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                <Link to="/booking?category=real-estate" className="text-primary font-bold flex items-center group-hover:translate-x-2 transition-transform">
                   Start Enquiry <ArrowRight size={18} className="ml-2" />
                 </Link>
               </motion.div>
