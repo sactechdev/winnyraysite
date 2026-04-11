@@ -22,7 +22,7 @@ const categories = [
     title: "Specialized Services",
     icon: Sparkles,
     desc: "Expert care for upholstery, windows, and post-construction.",
-    features: ["Upholstery Cleaning", "Window Cleaning", "Carpet Shampooing", "Fumigation"],
+    features: ["Upholstery Cleaning", "Window Cleaning", "Carpet Shampooing", "Fumigation", "Outsourcing Recruitment"],
     image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800"
   }
 ];

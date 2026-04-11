@@ -1,8 +1,39 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Mail, Phone, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { supabase } from '@/src/lib/supabase';
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
+
+  const handleQuoteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      client_name: formData.get('name') as string,
+      client_phone: formData.get('phone') as string,
+      service_type: `Cleaning: ${formData.get('service')}`,
+      address: formData.get('location') as string,
+      city: 'Kano',
+      status: 'pending'
+    };
+
+    try {
+      const { error } = await supabase.from('bookings').insert([data]);
+      if (error) throw error;
+      setIsSuccess(true);
+      (e.target as HTMLFormElement).reset();
+    } catch (err: any) {
+      console.error('Error submitting quote:', err);
+      alert(`Submission Error: ${err.message || 'Please check your connection.'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="pt-20 min-h-screen bg-white">
       {/* Header */}
@@ -47,36 +78,56 @@ export default function ContactPage() {
             </div>
             <div className="flex-1 w-full">
               <div className="glass p-8 md:p-10 rounded-3xl shadow-xl border border-primary/10">
-                <h3 className="text-2xl font-display font-bold mb-6">Request a Free Quote</h3>
-                <form className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Full Name</label>
-                      <input type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="John Doe" />
+                {isSuccess ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle2 size={32} className="text-primary" />
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Phone Number</label>
-                      <input type="tel" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="+234..." />
-                    </div>
+                    <h3 className="text-2xl font-display font-bold mb-2">Quote Requested!</h3>
+                    <p className="text-secondary/60 mb-6">We've received your request and will contact you shortly.</p>
+                    <button onClick={() => setIsSuccess(false)} className="text-primary font-bold hover:underline">Send another request</button>
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Service Type</label>
-                    <select className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm">
-                      <option>Residential Cleaning</option>
-                      <option>Commercial Cleaning</option>
-                      <option>Deep Cleaning</option>
-                      <option>Post-Construction</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Location in Kano</label>
-                    <input type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="e.g. Nassarawa, GRA" />
-                  </div>
-                  <button type="submit" className="w-full btn-primary py-3 text-sm font-bold flex items-center justify-center space-x-2">
-                    <span>Get My Quote</span>
-                    <ArrowRight size={16} />
-                  </button>
-                </form>
+                ) : (
+                  <>
+                    <h3 className="text-2xl font-display font-bold mb-6">Request a Free Quote</h3>
+                    <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Full Name</label>
+                          <input name="name" required type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="John Doe" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Phone Number</label>
+                          <input name="phone" required type="tel" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="+234..." />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Service Type</label>
+                        <select name="service" required className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm">
+                          <option>Residential Cleaning</option>
+                          <option>Commercial Cleaning</option>
+                          <option>Deep Cleaning</option>
+                          <option>Post-Construction</option>
+                          <option>Outsourcing Recruitment Services</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Location in Kano</label>
+                        <input name="location" required type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="e.g. Nassarawa, GRA" />
+                      </div>
+                      <button type="submit" disabled={isSubmitting} className="w-full btn-primary py-3 text-sm font-bold flex items-center justify-center space-x-2 disabled:opacity-50">
+                        {isSubmitting ? (
+                          <span>Submitting...</span>
+                        ) : (
+                          <>
+                            <span>Get My Quote</span>
+                            <ArrowRight size={16} />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -107,8 +158,9 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Phone Number</h4>
-                      <p className="text-secondary/60">+234 800 WINNYRAY</p>
-                      <p className="text-secondary/60">+234 701 234 5678</p>
+                      <p className="text-secondary/60">+234 703 698 1080</p>
+                      <p className="text-secondary/60">+234 813 473 9747</p>
+                      <p className="text-secondary/60">+234 907 772 7119</p>
                     </div>
                   </div>
 
