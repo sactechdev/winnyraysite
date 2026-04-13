@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Save, Layout, Phone, Share2, Sparkles, Home, LogOut, Info, Shield, ListTodo, Settings, Upload, Globe } from 'lucide-react';
+import { Save, Layout, Phone, Share2, Sparkles, Home, LogOut, Info, Shield, ListTodo, Settings, Upload, Globe, Mail } from 'lucide-react';
 import { useContent, defaultContent } from '@/src/lib/ContentContext';
 import { cn } from '@/src/lib/utils';
 import { supabase } from '@/src/lib/supabase';
@@ -13,6 +13,9 @@ export default function AdminCMS() {
   const [activeTab, setActiveTab] = React.useState<'contact' | 'hero' | 'cleaning' | 'real_estate' | 'about' | 'privacy' | 'bookings' | 'settings'>('contact');
   const [bookings, setBookings] = React.useState<any[]>([]);
   const [isUploading, setIsUploading] = React.useState(false);
+  const [quotingBooking, setQuotingBooking] = React.useState<any>(null);
+  const [quoteData, setQuoteData] = React.useState({ amount: '', notes: '' });
+  const [isQuoting, setIsQuoting] = React.useState(false);
 
   React.useEffect(() => {
     setFormData(content);
@@ -56,7 +59,7 @@ export default function AdminCMS() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `logo-${Date.now()}.${fileExt}`;
-      const filePath = fileName; // Removed 'public/' prefix for simplicity
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from('site-assets')
@@ -81,6 +84,47 @@ export default function AdminCMS() {
       alert('Upload failed: ' + error.message + '\nMake sure a "site-assets" bucket exists in Supabase Storage.');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleGenerateQuote = async () => {
+    if (!quotingBooking) return;
+    setIsQuoting(true);
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .update({
+          status: 'quoted',
+          metadata: {
+            ...(quotingBooking.metadata || {}),
+            quote_amount: quoteData.amount,
+            quote_notes: quoteData.notes,
+            quoted_at: new Date().toISOString()
+          }
+        })
+        .eq('id', quotingBooking.id);
+
+      if (error) throw error;
+      alert('Quote generated successfully!');
+      setQuotingBooking(null);
+      setQuoteData({ amount: '', notes: '' });
+      fetchBookings();
+    } catch (error: any) {
+      console.error('Error generating quote:', error);
+      alert('Failed to generate quote: ' + error.message);
+    } finally {
+      setIsQuoting(false);
+    }
+  };
+
+  const handleDeleteBooking = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this booking?')) return;
+    try {
+      const { error } = await supabase.from('bookings').delete().eq('id', id);
+      if (error) throw error;
+      fetchBookings();
+    } catch (error: any) {
+      alert('Delete failed: ' + error.message);
     }
   };
 
@@ -637,16 +681,41 @@ export default function AdminCMS() {
                                 <p className="text-xs text-secondary/60">{booking.address}, {booking.city}</p>
                               </td>
                               <td className="px-6 py-4">
-                                <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-600 text-[10px] font-bold uppercase tracking-widest">
-                                  Pending Quote
+                                <span className={cn(
+                                  "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
+                                  booking.status === 'quoted' ? "bg-green-100 text-green-600" : 
+                                  booking.status === 'message' ? "bg-blue-100 text-blue-600" :
+                                  "bg-yellow-100 text-yellow-600"
+                                )}>
+                                  {booking.status === 'quoted' ? 'Quoted' : 
+                                   booking.status === 'message' ? 'Message' : 
+                                   'Pending Quote'}
                                 </span>
+                                {booking.metadata?.quote_amount && (
+                                  <p className="text-xs font-bold text-green-600 mt-1">₦{booking.metadata.quote_amount}</p>
+                                )}
                               </td>
                               <td className="px-6 py-4">
                                 <div className="flex space-x-2">
-                                  <a href={`mailto:${booking.client_email}`} className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all">
-                                    <Phone size={14} />
+                                  <a href={`mailto:${booking.client_email}`} className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all" title="Email Client">
+                                    <Mail size={14} />
                                   </a>
-                                  <button className="text-xs font-bold text-secondary/40 hover:text-red-500">Delete</button>
+                                  {booking.status !== 'message' && booking.status !== 'quoted' && (
+                                    <button 
+                                      onClick={() => setQuotingBooking(booking)}
+                                      className="p-2 bg-green-500/10 text-green-600 rounded-lg hover:bg-green-500 hover:text-white transition-all"
+                                      title="Generate Quote"
+                                    >
+                                      <Sparkles size={14} />
+                                    </button>
+                                  )}
+                                  <button 
+                                    onClick={() => handleDeleteBooking(booking.id)}
+                                    className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
+                                    title="Delete"
+                                  >
+                                    <LogOut size={14} className="rotate-90" />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -661,6 +730,57 @@ export default function AdminCMS() {
           </div>
         </div>
       </div>
+      {/* Quote Generation Modal */}
+      {quotingBooking && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-secondary/80 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-primary/10"
+          >
+            <h3 className="text-2xl font-display font-bold mb-2">Generate Quote</h3>
+            <p className="text-secondary/60 mb-6">For {quotingBooking.client_name}</p>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Quote Amount (₦)</label>
+                <input 
+                  type="number" 
+                  value={quoteData.amount}
+                  onChange={(e) => setQuoteData({ ...quoteData, amount: e.target.value })}
+                  className="w-full p-4 bg-secondary/5 border border-primary/10 rounded-xl outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="e.g. 50000"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Additional Notes</label>
+                <textarea 
+                  value={quoteData.notes}
+                  onChange={(e) => setQuoteData({ ...quoteData, notes: e.target.value })}
+                  className="w-full p-4 bg-secondary/5 border border-primary/10 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 h-32"
+                  placeholder="Details about the quote..."
+                />
+              </div>
+            </div>
+
+            <div className="flex space-x-4 mt-8">
+              <button 
+                onClick={() => setQuotingBooking(null)}
+                className="flex-1 py-4 rounded-xl font-bold text-secondary/60 hover:bg-secondary/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleGenerateQuote}
+                disabled={isQuoting || !quoteData.amount}
+                className="flex-1 btn-primary py-4 rounded-xl font-bold disabled:opacity-50"
+              >
+                {isQuoting ? 'Generating...' : 'Generate Quote'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

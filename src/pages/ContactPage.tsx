@@ -19,6 +19,7 @@ export default function ContactPage() {
     const formData = new FormData(e.currentTarget);
     const data = {
       client_name: formData.get('name') as string,
+      client_email: formData.get('email') as string,
       client_phone: formData.get('phone') as string,
       service_type: `Cleaning: ${formData.get('service')}`,
       address: formData.get('location') as string,
@@ -34,6 +35,33 @@ export default function ContactPage() {
     } catch (err: any) {
       console.error('Error submitting quote:', err);
       alert(`Submission Error: ${err.message || 'Please check your connection.'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      client_name: formData.get('name') as string,
+      client_email: formData.get('email') as string,
+      client_phone: 'N/A', // Not in the contact form, using placeholder
+      service_type: `Message: ${formData.get('subject')}`,
+      instructions: formData.get('message') as string,
+      status: 'message'
+    };
+
+    try {
+      const { error } = await supabase.from('bookings').insert([data]);
+      if (error) throw error;
+      setIsSuccess(true);
+      (e.target as HTMLFormElement).reset();
+    } catch (err: any) {
+      console.error('Error sending message:', err);
+      alert(`Error: ${err.message || 'Please check your connection.'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -100,6 +128,10 @@ export default function ContactPage() {
                         <div className="space-y-1">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Full Name</label>
                           <input name="name" required type="text" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="John Doe" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Email Address</label>
+                          <input name="email" required type="email" className="w-full p-3 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none text-sm" placeholder="john@example.com" />
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Phone Number</label>
@@ -204,20 +236,20 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="glass p-8 md:p-12 rounded-3xl shadow-2xl">
               <h3 className="text-2xl font-display font-bold mb-8">Send us a Message</h3>
-              <form className="space-y-6">
+              <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Full Name</label>
-                    <input type="text" className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" placeholder="John Doe" />
+                    <input name="name" required type="text" className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" placeholder="John Doe" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Email Address</label>
-                    <input type="email" className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" placeholder="john@example.com" />
+                    <input name="email" required type="email" className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" placeholder="john@example.com" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Subject</label>
-                  <select className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none">
+                  <select name="subject" required className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none">
                     <option>General Inquiry</option>
                     <option>Cleaning Service Booking</option>
                     <option>Real Estate Inquiry</option>
@@ -226,11 +258,17 @@ export default function ContactPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Message</label>
-                  <textarea className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none h-40" placeholder="How can we help you?"></textarea>
+                  <textarea name="message" required className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none h-40" placeholder="How can we help you?"></textarea>
                 </div>
-                <button type="submit" className="w-full btn-primary py-4 text-lg flex items-center justify-center space-x-2">
-                  <span>Send Message</span>
-                  <Send size={20} />
+                <button type="submit" disabled={isSubmitting} className="w-full btn-primary py-4 text-lg flex items-center justify-center space-x-2 disabled:opacity-50">
+                  {isSubmitting ? (
+                    <span>Sending...</span>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send size={20} />
+                    </>
+                  )}
                 </button>
               </form>
             </div>
