@@ -19,12 +19,12 @@ export default function AboutPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-8">
-              {content.about.title.split('WinnyRay')[0]}
+              {content.about?.title?.split('WinnyRay')[0]}
               <span className="text-primary italic">WinnyRay</span>
-              {content.about.title.split('WinnyRay')[1]}
+              {content.about?.title?.split('WinnyRay')[1]}
             </h1>
             <p className="text-xl text-white/60 leading-relaxed">
-              {content.about.content}
+              {content.about?.content}
             </p>
           </motion.div>
         </div>
@@ -49,7 +49,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-3xl font-display font-bold mb-6">Our Mission</h3>
               <p className="text-secondary/60 text-lg leading-relaxed">
-                {content.about.mission}
+                {content.about?.mission}
               </p>
             </motion.div>
 
@@ -64,7 +64,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-3xl font-display font-bold mb-6">Our Vision</h3>
               <p className="text-secondary/60 text-lg leading-relaxed">
-                {content.about.vision}
+                {content.about?.vision}
               </p>
             </motion.div>
           </div>
@@ -77,7 +77,7 @@ export default function AboutPage() {
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1">
               <img 
-                src={content.about.image} 
+                src={content.about?.image} 
                 alt="WinnyRay Office" 
                 className="rounded-3xl shadow-2xl w-full object-cover aspect-video"
                 referrerPolicy="no-referrer"

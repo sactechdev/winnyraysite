@@ -10,7 +10,7 @@ export default function CleaningPage() {
 
   if (loading) return <div className="pt-40 text-center">Loading...</div>;
 
-  const categories = content.services.cleaning;
+  const categories = content.services?.cleaning || [];
   return (
     <div className="pt-20">
       {/* Header */}

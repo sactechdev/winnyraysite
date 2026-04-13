@@ -17,8 +17,8 @@ export default function PrivacyPolicyPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <Shield size={48} className="text-primary mx-auto mb-6" />
-            <h1 className="text-5xl font-display font-bold mb-4">{content.privacy_policy.title}</h1>
-            <p className="text-white/60">Last Updated: {content.privacy_policy.last_updated}</p>
+            <h1 className="text-5xl font-display font-bold mb-4">{content.privacy_policy?.title}</h1>
+            <p className="text-white/60">Last Updated: {content.privacy_policy?.last_updated}</p>
           </motion.div>
         </div>
       </section>
@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
       <section className="py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg prose-primary max-w-none text-secondary/70 leading-relaxed">
-            {content.privacy_policy.content.split('\n').map((paragraph, i) => (
+            {content.privacy_policy?.content?.split('\n').map((paragraph, i) => (
               <p key={i} className="mb-6">{paragraph}</p>
             ))}
           </div>

@@ -10,7 +10,7 @@ export default function RealEstatePage() {
 
   if (loading) return <div className="pt-40 text-center">Loading...</div>;
 
-  const enquiryTypes = content.services.real_estate;
+  const enquiryTypes = content.services?.real_estate || [];
 
   return (
     <div className="pt-20">

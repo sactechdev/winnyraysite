@@ -15,7 +15,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const { content } = useContent();
+  const { content, loading } = useContent();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isAdmin, setIsAdmin] = React.useState(false);
   const location = useLocation();
@@ -49,18 +49,33 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  if (loading || !content) {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-primary/10 h-20 flex items-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
+          <div className="h-8 w-32 bg-primary/10 rounded animate-pulse"></div>
+          <div className="hidden md:flex space-x-8">
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-4 w-16 bg-primary/5 rounded animate-pulse"></div>)}
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-primary/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
-              <img 
-                src={content.logo_url} 
-                alt="WinnyRay Logo" 
-                className="h-12 w-auto"
-                referrerPolicy="no-referrer"
-              />
+              {content.logo_url && (
+                <img 
+                  src={content.logo_url} 
+                  alt="WinnyRay Logo" 
+                  className="h-12 w-auto"
+                  referrerPolicy="no-referrer"
+                />
+              )}
               <div className="hidden">
                 <span className="text-2xl font-display font-bold gold-gradient bg-clip-text text-transparent">
                   WINNYRAY
