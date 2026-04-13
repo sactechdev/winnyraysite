@@ -102,7 +102,7 @@ export default function Dashboard() {
             </button>
           ))}
           
-          {(profile?.role === 'admin' || user?.email === 'sactechcomputers@gmail.com') && (
+          {(profile?.role === 'admin' || ['sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com'].includes(user?.email || '')) && (
             <button
               onClick={() => navigate('/admin')}
               className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold text-primary hover:bg-primary/5 transition-all"

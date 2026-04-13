@@ -29,9 +29,9 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
             .eq('id', session.user.id)
             .single();
 
-          const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
+          const isAdminEmail = ['sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com'].includes(session.user.email || '');
 
-          if (requiredRole === 'admin' && isEmailAdmin) {
+          if (requiredRole === 'admin' && isAdminEmail) {
             setAuthorized(true);
           } else if (error || !profile || profile.role !== requiredRole) {
             setAuthorized(false);

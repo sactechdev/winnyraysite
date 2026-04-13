@@ -30,8 +30,8 @@ export default function Navbar() {
           .eq('id', session.user.id)
           .single();
         
-        const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
-        setIsAdmin(profile?.role === 'admin' || isEmailAdmin);
+        const isAdminEmail = ['sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com'].includes(session.user.email || '');
+        setIsAdmin(profile?.role === 'admin' || isAdminEmail);
       } else {
         setIsAdmin(false);
       }

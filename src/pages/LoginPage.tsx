@@ -33,9 +33,9 @@ export default function LoginPage() {
           .eq('id', session.user.id)
           .single();
         
-        const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
+        const isAdminEmail = ['sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com'].includes(session.user.email || '');
         
-        if (profile?.role === 'admin' || isEmailAdmin) {
+        if (profile?.role === 'admin' || isAdminEmail) {
           navigate('/admin');
         } else {
           navigate('/dashboard');
@@ -62,10 +62,10 @@ export default function LoginPage() {
             .eq('id', session.user.id)
             .single();
           
-          // Fallback for the primary admin email
-          const isEmailAdmin = session.user.email === 'sactechcomputers@gmail.com';
+          // Fallback for the primary admin emails
+          const isAdminEmail = ['sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com'].includes(session.user.email || '');
           
-          if (profile?.role === 'admin' || isEmailAdmin) {
+          if (profile?.role === 'admin' || isAdminEmail) {
             navigate('/admin');
             return;
           }
