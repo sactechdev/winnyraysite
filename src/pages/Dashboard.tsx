@@ -69,7 +69,7 @@ export default function Dashboard() {
   };
 
   const stats = [
-    { label: 'My Bookings', value: bookings.length.toString(), icon: Calendar, color: 'text-blue-500' },
+    { label: 'My Bookings', value: (bookings?.length || 0).toString(), icon: Calendar, color: 'text-blue-500' },
     { label: 'Properties Interested', value: '0', icon: Home, color: 'text-primary' },
     { label: 'Total Spent', value: '₦0', icon: TrendingUp, color: 'text-green-500' },
     { label: 'Notifications', value: '0', icon: Bell, color: 'text-red-500' },
@@ -189,7 +189,7 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-primary/5">
-                    {bookings.length === 0 ? (
+                    {(bookings?.length || 0) === 0 ? (
                       <tr>
                         <td colSpan={3} className="px-6 py-12 text-center text-secondary/40 italic">No bookings found.</td>
                       </tr>

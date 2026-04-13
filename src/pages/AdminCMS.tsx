@@ -620,7 +620,7 @@ export default function AdminCMS() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-primary/5">
-                        {bookings.length === 0 ? (
+                        {(bookings?.length || 0) === 0 ? (
                           <tr>
                             <td colSpan={4} className="px-6 py-12 text-center text-secondary/40">No bookings found.</td>
                           </tr>

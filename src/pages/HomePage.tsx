@@ -7,7 +7,7 @@ import { useContent } from '@/src/lib/ContentContext';
 export default function HomePage() {
   const { content, loading } = useContent();
   const [currentSlide, setCurrentSlide] = React.useState(0);
-  const slides = content.hero_slides.length > 0 ? content.hero_slides : [
+  const slides = (content.hero_slides && content.hero_slides.length > 0) ? content.hero_slides : [
     {
       title: "Pristine Spaces, Professional Care",
       subtitle: "Premium Cleaning Services in Kano",
@@ -123,7 +123,7 @@ export default function HomePage() {
               className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-2xl"
             >
               <img 
-                src={content.services.cleaning[0]?.image || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1000"} 
+                src={content.services?.cleaning?.[0]?.image || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1000"} 
                 alt="Professional Cleaning" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -145,7 +145,7 @@ export default function HomePage() {
               className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-2xl"
             >
               <img 
-                src={content.services.real_estate[0]?.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000"} 
+                src={content.services?.real_estate?.[0]?.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000"} 
                 alt="Luxury Real Estate" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"

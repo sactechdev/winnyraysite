@@ -27,8 +27,8 @@ export default function BookingPage() {
   const { content, loading } = useContent();
   const [searchParams] = useSearchParams();
 
-  const CLEANING_SERVICES = content.services.cleaning.map(s => s.title);
-  const REAL_ESTATE_ENQUIRIES = content.services.real_estate.map(s => s.title);
+  const CLEANING_SERVICES = (content.services?.cleaning || []).map(s => s.title);
+  const REAL_ESTATE_ENQUIRIES = (content.services?.real_estate || []).map(s => s.title);
 
   const initialCategory = (searchParams.get('category') as 'cleaning' | 'real-estate') || 'cleaning';
   const initialType = searchParams.get('type') || '';

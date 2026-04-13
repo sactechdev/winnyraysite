@@ -119,7 +119,6 @@ CREATE POLICY "Allow public to view settings" ON site_settings FOR SELECT USING 
 
 DROP POLICY IF EXISTS "Allow admins to modify settings" ON site_settings;
 CREATE POLICY "Allow admins to modify settings" ON site_settings FOR ALL USING (
-  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') OR
   (auth.jwt() ->> 'email') IN ('sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com')
 );
 
@@ -142,7 +141,7 @@ CREATE POLICY "Users can update their own profile" ON profiles FOR UPDATE USING 
 
 DROP POLICY IF EXISTS "Admins can view all profiles" ON profiles;
 CREATE POLICY "Admins can view all profiles" ON profiles FOR SELECT USING (
-  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  (auth.jwt() ->> 'email') IN ('sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com')
 );
 
 -- 6. INITIAL DATA SEED
