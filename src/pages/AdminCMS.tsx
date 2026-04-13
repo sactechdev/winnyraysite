@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Save, Layout, Phone, Share2, Sparkles, Home, LogOut, Info, Shield, ListTodo, Settings, Upload, Globe } from 'lucide-react';
-import { useContent } from '@/src/lib/ContentContext';
+import { useContent, defaultContent } from '@/src/lib/ContentContext';
 import { cn } from '@/src/lib/utils';
 import { supabase } from '@/src/lib/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -155,10 +155,10 @@ export default function AdminCMS() {
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Office Address</label>
                       <input 
                         type="text" 
-                        value={formData.contact_info.address}
+                        value={formData.contact_info?.address || ''}
                         onChange={(e) => setFormData({
                           ...formData,
-                          contact_info: { ...formData.contact_info, address: e.target.value }
+                          contact_info: { ...(formData.contact_info || defaultContent.contact_info), address: e.target.value }
                         })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" 
                       />
@@ -168,10 +168,10 @@ export default function AdminCMS() {
                         <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Phone Number</label>
                         <input 
                           type="text" 
-                          value={formData.contact_info.phone}
+                          value={formData.contact_info?.phone || ''}
                           onChange={(e) => setFormData({
                             ...formData,
-                            contact_info: { ...formData.contact_info, phone: e.target.value }
+                            contact_info: { ...(formData.contact_info || defaultContent.contact_info), phone: e.target.value }
                           })}
                           className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" 
                         />
@@ -180,10 +180,10 @@ export default function AdminCMS() {
                         <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Email Address</label>
                         <input 
                           type="email" 
-                          value={formData.contact_info.email}
+                          value={formData.contact_info?.email || ''}
                           onChange={(e) => setFormData({
                             ...formData,
-                            contact_info: { ...formData.contact_info, email: e.target.value }
+                            contact_info: { ...(formData.contact_info || defaultContent.contact_info), email: e.target.value }
                           })}
                           className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" 
                         />
@@ -203,10 +203,10 @@ export default function AdminCMS() {
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Facebook URL</label>
                       <input 
                         type="text" 
-                        value={formData.social_links.facebook}
+                        value={formData.social_links?.facebook || ''}
                         onChange={(e) => setFormData({
                           ...formData,
-                          social_links: { ...formData.social_links, facebook: e.target.value }
+                          social_links: { ...(formData.social_links || defaultContent.social_links), facebook: e.target.value }
                         })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" 
                       />
@@ -215,10 +215,10 @@ export default function AdminCMS() {
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Instagram URL</label>
                       <input 
                         type="text" 
-                        value={formData.social_links.instagram}
+                        value={formData.social_links?.instagram || ''}
                         onChange={(e) => setFormData({
                           ...formData,
-                          social_links: { ...formData.social_links, instagram: e.target.value }
+                          social_links: { ...(formData.social_links || defaultContent.social_links), instagram: e.target.value }
                         })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" 
                       />
@@ -227,10 +227,10 @@ export default function AdminCMS() {
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Twitter URL</label>
                       <input 
                         type="text" 
-                        value={formData.social_links.twitter}
+                        value={formData.social_links?.twitter || ''}
                         onChange={(e) => setFormData({
                           ...formData,
-                          social_links: { ...formData.social_links, twitter: e.target.value }
+                          social_links: { ...(formData.social_links || defaultContent.social_links), twitter: e.target.value }
                         })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 outline-none" 
                       />
@@ -246,7 +246,7 @@ export default function AdminCMS() {
                   <h3 className="text-xl font-display font-bold mb-6">Hero Slides</h3>
                   <p className="text-secondary/60 mb-8">Manage the slides that appear in the homepage hero section.</p>
                   <div className="space-y-12">
-                    {formData.hero_slides.map((slide, index) => (
+                    {(formData.hero_slides || []).map((slide, index) => (
                       <div key={index} className="p-6 rounded-2xl bg-white/50 border border-primary/10 space-y-4">
                         <div className="flex justify-between items-center">
                           <h4 className="font-bold">Slide #{index + 1}</h4>
@@ -257,9 +257,9 @@ export default function AdminCMS() {
                             <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Title</label>
                             <input 
                               type="text" 
-                              value={slide.title}
+                              value={slide.title || ''}
                               onChange={(e) => {
-                                const newSlides = [...formData.hero_slides];
+                                const newSlides = [...(formData.hero_slides || [])];
                                 newSlides[index].title = e.target.value;
                                 setFormData({ ...formData, hero_slides: newSlides });
                               }}
@@ -270,9 +270,9 @@ export default function AdminCMS() {
                             <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Subtitle</label>
                             <input 
                               type="text" 
-                              value={slide.subtitle}
+                              value={slide.subtitle || ''}
                               onChange={(e) => {
-                                const newSlides = [...formData.hero_slides];
+                                const newSlides = [...(formData.hero_slides || [])];
                                 newSlides[index].subtitle = e.target.value;
                                 setFormData({ ...formData, hero_slides: newSlides });
                               }}
@@ -284,9 +284,9 @@ export default function AdminCMS() {
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Image URL</label>
                           <input 
                             type="text" 
-                            value={slide.image}
+                            value={slide.image || ''}
                             onChange={(e) => {
-                              const newSlides = [...formData.hero_slides];
+                              const newSlides = [...(formData.hero_slides || [])];
                               newSlides[index].image = e.target.value;
                               setFormData({ ...formData, hero_slides: newSlides });
                             }}
@@ -309,14 +309,14 @@ export default function AdminCMS() {
                   <h3 className="text-xl font-display font-bold mb-6">Cleaning Services</h3>
                   <p className="text-secondary/60 mb-8">Manage the cleaning service categories shown on the services page.</p>
                   <div className="space-y-8">
-                    {formData.services.cleaning.map((service, index) => (
+                    {(formData.services?.cleaning || []).map((service, index) => (
                       <div key={index} className="p-6 rounded-2xl bg-white/50 border border-primary/10 space-y-4">
                         <div className="flex justify-between items-center">
                           <h4 className="font-bold">Service #{index + 1}</h4>
                           <button 
                             onClick={() => {
-                              const newCleaning = formData.services.cleaning.filter((_, i) => i !== index);
-                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                              const newCleaning = (formData.services?.cleaning || []).filter((_, i) => i !== index);
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), cleaning: newCleaning } });
                             }}
                             className="text-red-500 text-xs font-bold uppercase tracking-widest"
                           >
@@ -327,11 +327,11 @@ export default function AdminCMS() {
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Service Title</label>
                           <input 
                             type="text" 
-                            value={service.title}
+                            value={service.title || ''}
                             onChange={(e) => {
-                              const newCleaning = [...formData.services.cleaning];
+                              const newCleaning = [...(formData.services?.cleaning || [])];
                               newCleaning[index].title = e.target.value;
-                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), cleaning: newCleaning } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
                           />
@@ -339,11 +339,11 @@ export default function AdminCMS() {
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Description</label>
                           <textarea 
-                            value={service.desc}
+                            value={service.desc || ''}
                             onChange={(e) => {
-                              const newCleaning = [...formData.services.cleaning];
+                              const newCleaning = [...(formData.services?.cleaning || [])];
                               newCleaning[index].desc = e.target.value;
-                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), cleaning: newCleaning } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none h-24" 
                           />
@@ -352,11 +352,11 @@ export default function AdminCMS() {
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Image URL</label>
                           <input 
                             type="text" 
-                            value={service.image}
+                            value={service.image || ''}
                             onChange={(e) => {
-                              const newCleaning = [...formData.services.cleaning];
+                              const newCleaning = [...(formData.services?.cleaning || [])];
                               newCleaning[index].image = e.target.value;
-                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), cleaning: newCleaning } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
                           />
@@ -365,11 +365,11 @@ export default function AdminCMS() {
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Features (comma separated)</label>
                           <input 
                             type="text" 
-                            value={service.features.join(', ')}
+                            value={(service.features || []).join(', ')}
                             onChange={(e) => {
-                              const newCleaning = [...formData.services.cleaning];
+                              const newCleaning = [...(formData.services?.cleaning || [])];
                               newCleaning[index].features = e.target.value.split(',').map(s => s.trim());
-                              setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), cleaning: newCleaning } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
                           />
@@ -378,8 +378,8 @@ export default function AdminCMS() {
                     ))}
                     <button 
                       onClick={() => {
-                        const newCleaning = [...formData.services.cleaning, { title: '', desc: '', image: '', features: [] }];
-                        setFormData({ ...formData, services: { ...formData.services, cleaning: newCleaning } });
+                        const newCleaning = [...(formData.services?.cleaning || []), { title: '', desc: '', image: '', features: [] }];
+                        setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), cleaning: newCleaning } });
                       }}
                       className="w-full py-4 border-2 border-dashed border-primary/20 rounded-2xl text-primary font-bold hover:bg-primary/5 transition-all"
                     >
@@ -396,14 +396,14 @@ export default function AdminCMS() {
                   <h3 className="text-xl font-display font-bold mb-6">Real Estate Content</h3>
                   <p className="text-secondary/60 mb-8">Manage the real estate sections and featured properties.</p>
                   <div className="space-y-8">
-                    {formData.services.real_estate.map((service, index) => (
+                    {(formData.services?.real_estate || []).map((service, index) => (
                       <div key={index} className="p-6 rounded-2xl bg-white/50 border border-primary/10 space-y-4">
                         <div className="flex justify-between items-center">
                           <h4 className="font-bold">Section #{index + 1}</h4>
                           <button 
                             onClick={() => {
-                              const newRE = formData.services.real_estate.filter((_, i) => i !== index);
-                              setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                              const newRE = (formData.services?.real_estate || []).filter((_, i) => i !== index);
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), real_estate: newRE } });
                             }}
                             className="text-red-500 text-xs font-bold uppercase tracking-widest"
                           >
@@ -414,11 +414,11 @@ export default function AdminCMS() {
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Section Title</label>
                           <input 
                             type="text" 
-                            value={service.title}
+                            value={service.title || ''}
                             onChange={(e) => {
-                              const newRE = [...formData.services.real_estate];
+                              const newRE = [...(formData.services?.real_estate || [])];
                               newRE[index].title = e.target.value;
-                              setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), real_estate: newRE } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
                           />
@@ -426,11 +426,11 @@ export default function AdminCMS() {
                         <div className="space-y-2">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Description</label>
                           <textarea 
-                            value={service.desc}
+                            value={service.desc || ''}
                             onChange={(e) => {
-                              const newRE = [...formData.services.real_estate];
+                              const newRE = [...(formData.services?.real_estate || [])];
                               newRE[index].desc = e.target.value;
-                              setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), real_estate: newRE } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none h-24" 
                           />
@@ -439,11 +439,11 @@ export default function AdminCMS() {
                           <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Image URL</label>
                           <input 
                             type="text" 
-                            value={service.image}
+                            value={service.image || ''}
                             onChange={(e) => {
-                              const newRE = [...formData.services.real_estate];
+                              const newRE = [...(formData.services?.real_estate || [])];
                               newRE[index].image = e.target.value;
-                              setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                              setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), real_estate: newRE } });
                             }}
                             className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none" 
                           />
@@ -452,8 +452,8 @@ export default function AdminCMS() {
                     ))}
                     <button 
                       onClick={() => {
-                        const newRE = [...formData.services.real_estate, { title: '', desc: '', image: '', link: '/booking?category=real-estate' }];
-                        setFormData({ ...formData, services: { ...formData.services, real_estate: newRE } });
+                        const newRE = [...(formData.services?.real_estate || []), { title: '', desc: '', image: '', link: '/booking?category=real-estate' }];
+                        setFormData({ ...formData, services: { ...(formData.services || defaultContent.services), real_estate: newRE } });
                       }}
                       className="w-full py-4 border-2 border-dashed border-primary/20 rounded-2xl text-primary font-bold hover:bg-primary/5 transition-all"
                     >
@@ -476,16 +476,16 @@ export default function AdminCMS() {
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Page Title</label>
                       <input 
                         type="text" 
-                        value={formData.about.title}
-                        onChange={(e) => setFormData({ ...formData, about: { ...formData.about, title: e.target.value } })}
+                        value={formData.about?.title || ''}
+                        onChange={(e) => setFormData({ ...formData, about: { ...(formData.about || defaultContent.about), title: e.target.value } })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none" 
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Main Content</label>
                       <textarea 
-                        value={formData.about.content}
-                        onChange={(e) => setFormData({ ...formData, about: { ...formData.about, content: e.target.value } })}
+                        value={formData.about?.content || ''}
+                        onChange={(e) => setFormData({ ...formData, about: { ...(formData.about || defaultContent.about), content: e.target.value } })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none h-40" 
                       />
                     </div>
@@ -493,16 +493,16 @@ export default function AdminCMS() {
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Mission</label>
                         <textarea 
-                          value={formData.about.mission}
-                          onChange={(e) => setFormData({ ...formData, about: { ...formData.about, mission: e.target.value } })}
+                          value={formData.about?.mission || ''}
+                          onChange={(e) => setFormData({ ...formData, about: { ...(formData.about || defaultContent.about), mission: e.target.value } })}
                           className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none h-24" 
                         />
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Vision</label>
                         <textarea 
-                          value={formData.about.vision}
-                          onChange={(e) => setFormData({ ...formData, about: { ...formData.about, vision: e.target.value } })}
+                          value={formData.about?.vision || ''}
+                          onChange={(e) => setFormData({ ...formData, about: { ...(formData.about || defaultContent.about), vision: e.target.value } })}
                           className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none h-24" 
                         />
                       </div>
@@ -524,16 +524,16 @@ export default function AdminCMS() {
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Title</label>
                       <input 
                         type="text" 
-                        value={formData.privacy_policy.title}
-                        onChange={(e) => setFormData({ ...formData, privacy_policy: { ...formData.privacy_policy, title: e.target.value } })}
+                        value={formData.privacy_policy?.title || ''}
+                        onChange={(e) => setFormData({ ...formData, privacy_policy: { ...(formData.privacy_policy || defaultContent.privacy_policy), title: e.target.value } })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none" 
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-secondary/40">Policy Content</label>
                       <textarea 
-                        value={formData.privacy_policy.content}
-                        onChange={(e) => setFormData({ ...formData, privacy_policy: { ...formData.privacy_policy, content: e.target.value } })}
+                        value={formData.privacy_policy?.content || ''}
+                        onChange={(e) => setFormData({ ...formData, privacy_policy: { ...(formData.privacy_policy || defaultContent.privacy_policy), content: e.target.value } })}
                         className="w-full p-4 bg-white border border-primary/10 rounded-xl outline-none h-96" 
                       />
                     </div>
@@ -579,7 +579,7 @@ export default function AdminCMS() {
                             <label className="text-[10px] font-bold uppercase tracking-widest text-secondary/40">Logo URL (Direct Link)</label>
                             <input 
                               type="text" 
-                              value={formData.logo_url}
+                              value={formData.logo_url || ''}
                               onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
                               className="w-full p-3 bg-white border border-primary/5 rounded-lg outline-none text-sm" 
                               placeholder="https://example.com/logo.png"

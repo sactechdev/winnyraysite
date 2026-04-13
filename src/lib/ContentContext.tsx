@@ -50,7 +50,7 @@ interface SiteContent {
   logo_url: string;
 }
 
-const defaultContent: SiteContent = {
+export const defaultContent: SiteContent = {
   contact_info: {
     address: "15 Bravo Close Zungeru by kwakwachi, Kano",
     phone: "+234 703 698 1080, +234 813 473 9747, +234 907 772 7119",
@@ -160,7 +160,21 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
           .single();
 
         if (data) {
-          setContent(data.content);
+          const fetched = data.content || {};
+          setContent(prev => ({
+            ...prev,
+            ...fetched,
+            contact_info: { ...prev.contact_info, ...(fetched.contact_info || {}) },
+            social_links: { ...prev.social_links, ...(fetched.social_links || {}) },
+            services: { 
+              cleaning: fetched.services?.cleaning || prev.services.cleaning,
+              real_estate: fetched.services?.real_estate || prev.services.real_estate
+            },
+            about: { ...prev.about, ...(fetched.about || {}) },
+            privacy_policy: { ...prev.privacy_policy, ...(fetched.privacy_policy || {}) },
+            hero_slides: fetched.hero_slides || prev.hero_slides,
+            logo_url: fetched.logo_url || prev.logo_url
+          }));
         } else if (error && error.code === 'PGRST116') {
           // Table or row doesn't exist yet, use defaults
           console.log('Using default content');

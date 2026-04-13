@@ -68,7 +68,7 @@ export default function HomePage() {
                 {slides[currentSlide].subtitle}
               </span>
               <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-tight mb-8">
-                {slides[currentSlide].title.split(',')[0]} <span className="text-primary italic">{slides[currentSlide].title.split(',')[1] || ''}</span>
+                {(slides[currentSlide].title || '').split(',')[0]} <span className="text-primary italic">{(slides[currentSlide].title || '').split(',')[1] || ''}</span>
               </h1>
               <p className="text-xl text-white/70 mb-10 leading-relaxed">
                 {slides[currentSlide].desc}

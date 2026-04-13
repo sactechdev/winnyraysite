@@ -153,7 +153,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Our Office</h4>
-                      <p className="text-secondary/60">{content.contact_info.address}</p>
+                      <p className="text-secondary/60">{content.contact_info?.address}</p>
                     </div>
                   </div>
 
@@ -163,7 +163,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Phone Number</h4>
-                      {content.contact_info.phone.split(',').map((p, i) => (
+                      {(content.contact_info?.phone || '').split(',').map((p, i) => (
                         <p key={i} className="text-secondary/60">{p.trim()}</p>
                       ))}
                     </div>
@@ -175,7 +175,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Email Address</h4>
-                      <p className="text-secondary/60">{content.contact_info.email}</p>
+                      <p className="text-secondary/60">{content.contact_info?.email}</p>
                     </div>
                   </div>
 
@@ -185,7 +185,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Working Hours</h4>
-                      <p className="text-secondary/60">{content.contact_info.working_hours}</p>
+                      <p className="text-secondary/60">{content.contact_info?.working_hours}</p>
                     </div>
                   </div>
                 </div>
