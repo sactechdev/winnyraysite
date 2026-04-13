@@ -187,7 +187,6 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const updateContent = async (newContent: Partial<SiteContent>) => {
     const updated = { ...content, ...newContent };
-    setContent(updated);
     
     try {
       const { error } = await supabase
@@ -195,8 +194,11 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
         .upsert({ id: 1, content: updated });
       
       if (error) throw error;
-    } catch (err) {
+      setContent(updated);
+      return { success: true };
+    } catch (err: any) {
       console.error('Error updating content:', err);
+      return { success: false, error: err.message };
     }
   };
 

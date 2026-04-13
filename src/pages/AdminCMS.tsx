@@ -35,8 +35,12 @@ export default function AdminCMS() {
   if (loading) return <div className="pt-40 text-center">Loading CMS...</div>;
 
   const handleSave = async () => {
-    await updateContent(formData);
-    alert('Content updated successfully!');
+    const result = await updateContent(formData);
+    if (result?.success) {
+      alert('Content updated successfully!');
+    } else {
+      alert('Failed to update content: ' + (result?.error || 'Unknown error'));
+    }
   };
 
   const handleLogout = async () => {
@@ -51,14 +55,20 @@ export default function AdminCMS() {
     setIsUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `logo-${Math.random()}.${fileExt}`;
-      const filePath = `public/${fileName}`;
+      const fileName = `logo-${Date.now()}.${fileExt}`;
+      const filePath = fileName; // Removed 'public/' prefix for simplicity
 
       const { error: uploadError } = await supabase.storage
         .from('site-assets')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Supabase Upload Error:', uploadError);
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('site-assets')

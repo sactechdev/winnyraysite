@@ -119,7 +119,8 @@ CREATE POLICY "Allow public to view settings" ON site_settings FOR SELECT USING 
 
 DROP POLICY IF EXISTS "Allow admins to modify settings" ON site_settings;
 CREATE POLICY "Allow admins to modify settings" ON site_settings FOR ALL USING (
-  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') OR
+  (auth.jwt() ->> 'email') IN ('sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com')
 );
 
 -- Properties Policies
@@ -128,7 +129,8 @@ CREATE POLICY "Allow public to view properties" ON properties FOR SELECT USING (
 
 DROP POLICY IF EXISTS "Allow admins to manage properties" ON properties;
 CREATE POLICY "Allow admins to manage properties" ON properties FOR ALL USING (
-  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') OR
+  (auth.jwt() ->> 'email') IN ('sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com')
 );
 
 -- Profiles Policies
