@@ -81,6 +81,24 @@ ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
+-- Storage Policies (Run these in SQL Editor)
+-- Note: Ensure the 'site-assets' bucket is created first.
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('site-assets', 'site-assets', true);
+
+-- Allow public to view assets
+DROP POLICY IF EXISTS "Public View Assets" ON storage.objects;
+CREATE POLICY "Public View Assets" ON storage.objects FOR SELECT USING (bucket_id = 'site-assets');
+
+-- Allow admins to manage assets
+DROP POLICY IF EXISTS "Admin Manage Assets" ON storage.objects;
+CREATE POLICY "Admin Manage Assets" ON storage.objects FOR ALL USING (
+  bucket_id = 'site-assets' AND 
+  (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') OR
+    (auth.jwt() ->> 'email') IN ('sactechcomputers@gmail.com', 'sheriffdeenalade@gmail.com')
+  )
+);
+
 -- Bookings Policies
 DROP POLICY IF EXISTS "Allow public to insert bookings" ON bookings;
 CREATE POLICY "Allow public to insert bookings" ON bookings FOR INSERT WITH CHECK (true);
