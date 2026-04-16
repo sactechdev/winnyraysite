@@ -117,28 +117,6 @@ export default function HomePage() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Cleaning Card */}
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-2xl"
-            >
-              <img 
-                src={content.services?.cleaning?.[0]?.image || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1000"} 
-                alt="Professional Cleaning" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/20 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 p-8 w-full">
-                <Sparkles className="text-primary mb-4" size={40} />
-                <h3 className="text-3xl font-display font-bold text-white mb-4">Professional Cleaning</h3>
-                <p className="text-white/70 mb-6">From residential deep cleans to commercial maintenance in Kano, we bring sparkle to your space.</p>
-                <Link to="/cleaning" className="inline-flex items-center text-primary font-bold hover:underline">
-                  Explore Services <ArrowRight size={16} className="ml-2" />
-                </Link>
-              </div>
-            </motion.div>
-
             {/* Real Estate Card */}
             <motion.div 
               whileHover={{ y: -10 }}
@@ -157,6 +135,28 @@ export default function HomePage() {
                 <p className="text-white/70 mb-6">Discover exclusive properties in Kano and beyond. Your dream home awaits with WinnyRay.</p>
                 <Link to="/real-estate" className="inline-flex items-center text-primary font-bold hover:underline">
                   Property Enquiry <ArrowRight size={16} className="ml-2" />
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Cleaning Card */}
+            <motion.div 
+              whileHover={{ y: -10 }}
+              className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-2xl"
+            >
+              <img 
+                src={content.services?.cleaning?.[0]?.image || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1000"} 
+                alt="Professional Cleaning" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/20 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 p-8 w-full">
+                <Sparkles className="text-primary mb-4" size={40} />
+                <h3 className="text-3xl font-display font-bold text-white mb-4">Professional Cleaning</h3>
+                <p className="text-white/70 mb-6">From residential deep cleans to commercial maintenance in Kano, we bring sparkle to your space.</p>
+                <Link to="/cleaning" className="inline-flex items-center text-primary font-bold hover:underline">
+                  Explore Services <ArrowRight size={16} className="ml-2" />
                 </Link>
               </div>
             </motion.div>

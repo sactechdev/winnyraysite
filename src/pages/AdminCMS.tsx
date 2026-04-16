@@ -87,6 +87,21 @@ export default function AdminCMS() {
     }
   };
 
+  const sendQuoteEmail = (booking: any, amount: string, notes: string) => {
+    const subject = encodeURIComponent(`Quote for ${booking.service_type} - WinnyRay Nigeria Limited`);
+    const body = encodeURIComponent(
+      `Dear ${booking.client_name},\n\n` +
+      `Thank you for contacting WinnyRay Nigeria Limited.\n\n` +
+      `We have reviewed your request for ${booking.service_type} and are pleased to provide the following quote:\n\n` +
+      `Quote Amount: ₦${amount}\n` +
+      `Additional Notes: ${notes || 'N/A'}\n\n` +
+      `Please let us know if you would like to proceed or if you have any questions.\n\n` +
+      `Best regards,\n` +
+      `WinnyRay Nigeria Limited Team`
+    );
+    window.open(`mailto:${booking.client_email}?subject=${subject}&body=${body}`);
+  };
+
   const handleGenerateQuote = async () => {
     if (!quotingBooking) return;
     setIsQuoting(true);
@@ -105,7 +120,11 @@ export default function AdminCMS() {
         .eq('id', quotingBooking.id);
 
       if (error) throw error;
-      alert('Quote generated successfully!');
+      
+      // Trigger email automatically
+      sendQuoteEmail(quotingBooking, quoteData.amount, quoteData.notes);
+      
+      alert('Quote generated successfully! Your email client should open with the quote details.');
       setQuotingBooking(null);
       setQuoteData({ amount: '', notes: '' });
       fetchBookings();
@@ -697,9 +716,19 @@ export default function AdminCMS() {
                               </td>
                               <td className="px-6 py-4">
                                 <div className="flex space-x-2">
-                                  <a href={`mailto:${booking.client_email}`} className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all" title="Email Client">
+                                  <button 
+                                    onClick={() => {
+                                      if (booking.status === 'quoted') {
+                                        sendQuoteEmail(booking, booking.metadata.quote_amount, booking.metadata.quote_notes);
+                                      } else {
+                                        window.open(`mailto:${booking.client_email}`);
+                                      }
+                                    }}
+                                    className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all" 
+                                    title="Email Client"
+                                  >
                                     <Mail size={14} />
-                                  </a>
+                                  </button>
                                   {booking.status !== 'message' && booking.status !== 'quoted' && (
                                     <button 
                                       onClick={() => setQuotingBooking(booking)}
